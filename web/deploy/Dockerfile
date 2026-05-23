@@ -23,13 +23,10 @@ RUN addgroup --system --gid 1001 nodejs \
 
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
-COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
-COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
-COPY --from=builder /app/node_modules/@prisma/engines ./node_modules/@prisma/engines
-COPY --from=builder /app/package.json ./package.json
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+# node_modules complet (Prisma CLI + deps transitives ex. effect) — écrase le sous-ensemble standalone
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
 
 RUN mkdir -p public/uploads/models public/uploads/panoramas public/uploads/covers \
   && chown -R nextjs:nodejs public/uploads
