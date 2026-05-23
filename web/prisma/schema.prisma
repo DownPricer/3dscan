@@ -1,0 +1,81 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+}
+
+enum PropertyStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum ModelType {
+  GLB
+  GLTF
+  OBJ
+  ZIP
+}
+
+enum VisitType {
+  MODEL_3D
+  PANORAMA_360
+  HYBRID_3D_360
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  role         Role     @default(ADMIN)
+  createdAt    DateTime @default(now())
+}
+
+model Property {
+  id             String          @id @default(cuid())
+  name           String
+  slug           String          @unique
+  address        String?
+  city           String?
+  postalCode     String?
+  price          Int?
+  description    String?
+  coverImageUrl  String?
+  modelUrl       String
+  modelType      ModelType
+  visitType      VisitType       @default(MODEL_3D)
+  status         PropertyStatus  @default(DRAFT)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  panoramaScenes PanoramaScene[]
+  hotspots       Hotspot[]
+}
+
+model PanoramaScene {
+  id         String    @id @default(cuid())
+  propertyId String
+  property   Property  @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  name       String
+  imageUrl   String
+  sortOrder  Int       @default(0)
+  createdAt  DateTime  @default(now())
+  hotspots   Hotspot[]
+}
+
+model Hotspot {
+  id              String         @id @default(cuid())
+  propertyId      String
+  property        Property       @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  label           String
+  x               Float
+  y               Float
+  z               Float
+  panoramaSceneId String?
+  panoramaScene   PanoramaScene? @relation(fields: [panoramaSceneId], references: [id], onDelete: SetNull)
+}

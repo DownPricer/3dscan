@@ -1,0 +1,54 @@
+# SiteReady Scan — site web (dossier web/ du repo 3dscan)
+# Usage VPS : cd /opt/3dscan && docker compose up -d --build
+# Repo : https://github.com/DownPricer/3dscan.git — contexte build ./app/web
+#
+# Le conteneur 3dscan-front est joint au réseau 3dscan_default.
+# Connecter downpricer-nginx à ce réseau (voir deploy/deploy.sh).
+
+name: 3dscan
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: 3dscan-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-scan}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: ${POSTGRES_DB:-site_ready_scan}
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    networks:
+      - internal
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-scan} -d ${POSTGRES_DB:-site_ready_scan}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  front:
+    build:
+      context: ./app/web
+      dockerfile: deploy/Dockerfile
+    container_name: 3dscan-front
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-scan}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-site_ready_scan}?schema=public
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:3015:3000"
+    volumes:
+      - ./uploads:/app/public/uploads
+    networks:
+      - internal
+
+volumes:
+  pg_data:
+
+networks:
+  internal:
+    name: 3dscan_default

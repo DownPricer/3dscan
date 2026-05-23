@@ -2,6 +2,7 @@
 
 Monorepo pour la capture 3D mobile (ARCore) et le traitement PC des scans, dans l’écosystème **SiteReady**.
 
+- **Site web** visite 3D/360 : `web/` (Next.js)
 - Application Android : `scanner/`
 - Processeur PC Windows : `pc_processor/`
 - Code natif partagé : `common/`, `arcore/`, `arengine/`
@@ -12,7 +13,7 @@ Dépôt GitHub : https://github.com/DownPricer/3dscan.git
 
 1. **Sur téléphone** — scanner une scène en 3D, sauvegarder, exporter un dataset ZIP pour PC (`BASE+PC`).
 2. **Sur PC** — valider le dataset, prévisualiser, lancer Meshroom pour produire un modèle **site-ready** (`site-ready/site_model.glb`).
-3. **Sur le site web** — uploader le GLB dans l’admin du projet **Visitevirtuel** (Next.js, déployé séparément sur le VPS).
+3. **Sur le site web** — uploader le GLB dans l’admin (`web/`, déployé sur le VPS — voir `web/deploy/DEPLOYMENT_VPS.md`).
 
 ## Démarrage rapide
 
@@ -39,6 +40,7 @@ Documentation détaillée : [`pc_processor/README.md`](pc_processor/README.md).
 
 | Dossier | Description |
 |---------|-------------|
+| `web/` | Site public + admin (visites `/visite/[slug]`, upload GLB/panoramas) |
 | `scanner/` | App Android 3D Live Scanner (SiteReady) |
 | `pc_processor/` | GUI Python + pipeline Meshroom / export GLB |
 | `common/` | Sources C++ partagées |
@@ -47,10 +49,10 @@ Documentation détaillée : [`pc_processor/README.md`](pc_processor/README.md).
 
 ## Déploiement
 
-- **Audit stack** : [`DEPLOYMENT_AUDIT.md`](DEPLOYMENT_AUDIT.md)
-- **Procédure GitHub + VPS** : [`DEPLOYMENT.md`](DEPLOYMENT.md)
-
-> Ce dépôt n’est **pas** une application web. Le domaine `scan.siteready.fr` correspond au site **Visitevirtuel** (Next.js), pas à un `npm start` de ce repo.
+| Composant | Documentation |
+|-----------|----------------|
+| Scanner Android / PC | [`DEPLOYMENT_AUDIT.md`](DEPLOYMENT_AUDIT.md), [`DEPLOYMENT.md`](DEPLOYMENT.md) |
+| **Site web VPS** (`scan.sitereadyshd.fr`) | [`web/DEPLOY_SCAN_SITE_AUDIT.md`](web/DEPLOY_SCAN_SITE_AUDIT.md), [`web/deploy/DEPLOYMENT_VPS.md`](web/deploy/DEPLOYMENT_VPS.md) |
 
 ## Licence / crédits
 

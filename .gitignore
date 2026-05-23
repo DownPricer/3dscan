@@ -81,3 +81,13 @@ test_datasets/**/*.dataset
 
 # Meshroom cache local Windows
 MeshroomRuns/
+
+# Site web Next.js (web/)
+web/node_modules/
+web/.next/
+web/.env
+web/.env*.local
+web/public/uploads/*
+!web/public/uploads/.gitkeep
+web/tsconfig.tsbuildinfo
+web/exemple/

@@ -1,0 +1,55 @@
+{
+  "name": "site-ready-shd",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "prisma generate && next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:migrate": "prisma migrate dev",
+    "db:seed": "tsx prisma/seed.ts"
+  },
+  "dependencies": {
+    "@hookform/resolvers": "^5.2.2",
+    "@prisma/client": "^6.19.0",
+    "@radix-ui/react-label": "^2.1.8",
+    "@radix-ui/react-slot": "^1.2.4",
+    "@react-three/drei": "^10.7.7",
+    "@react-three/fiber": "^9.4.0",
+    "bcryptjs": "^3.0.3",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "jose": "^6.1.2",
+    "lucide-react": "^0.554.0",
+    "next": "^16.0.3",
+    "prisma": "^6.19.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-hook-form": "^7.66.0",
+    "server-only": "^0.0.1",
+    "tailwind-merge": "^3.4.0",
+    "three": "^0.181.2",
+    "three-stdlib": "^2.36.1",
+    "tsx": "^4.20.6",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.17",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/node": "^24.10.1",
+    "@types/react": "^19.2.6",
+    "@types/react-dom": "^19.2.3",
+    "@types/three": "^0.181.0",
+    "eslint": "^9.39.1",
+    "eslint-config-next": "^16.0.3",
+    "tailwindcss": "^4.1.17",
+    "typescript": "^5.9.3"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  }
+}
