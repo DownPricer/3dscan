@@ -1,49 +1,32 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
-import { FormEvent, Suspense, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { Suspense, useActionState } from "react";
+import { loginAction, type LoginState } from "@/app/admin/login/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
+const initialState: LoginState = { error: null };
+
 function LoginFormContent() {
-  const router = useRouter();
   const searchParams = useSearchParams();
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-
-  async function submit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setLoading(true);
-    setError(null);
-
-    const formData = new FormData(event.currentTarget);
-    const response = await fetch("/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email: formData.get("email"),
-        password: formData.get("password"),
-      }),
-    });
-
-    setLoading(false);
-
-    if (!response.ok) {
-      const data = (await response.json()) as { error?: string };
-      setError(data.error ?? "Connexion impossible.");
-      return;
-    }
-
-    router.push(searchParams.get("next") ?? "/admin");
-    router.refresh();
-  }
+  const next = searchParams.get("next") ?? "/admin";
+  const [state, formAction, pending] = useActionState(loginAction, initialState);
 
   return (
-    <form onSubmit={submit} className="space-y-5">
+    <form action={formAction} className="space-y-5" noValidate>
+      <input type="hidden" name="next" value={next} />
       <div className="space-y-2">
         <Label htmlFor="email">Email</Label>
-        <Input id="email" name="email" type="email" required autoComplete="email" />
+        <Input
+          id="email"
+          name="email"
+          type="email"
+          required
+          autoComplete="email"
+          disabled={pending}
+        />
       </div>
       <div className="space-y-2">
         <Label htmlFor="password">Mot de passe</Label>
@@ -53,11 +36,16 @@ function LoginFormContent() {
           type="password"
           required
           autoComplete="current-password"
+          disabled={pending}
         />
       </div>
-      {error ? <p className="rounded-2xl bg-red-50 p-3 text-sm text-red-700">{error}</p> : null}
-      <Button type="submit" className="w-full" disabled={loading}>
-        {loading ? "Connexion..." : "Se connecter"}
+      {state.error ? (
+        <p className="rounded-2xl bg-red-50 p-3 text-sm text-red-700" role="alert">
+          {state.error}
+        </p>
+      ) : null}
+      <Button type="submit" className="w-full" disabled={pending}>
+        {pending ? "Connexion..." : "Se connecter"}
       </Button>
     </form>
   );
