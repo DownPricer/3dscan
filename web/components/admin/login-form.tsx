@@ -1,12 +1,12 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { FormEvent, useState } from "react";
+import { FormEvent, Suspense, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-export function LoginForm() {
+function LoginFormContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [error, setError] = useState<string | null>(null);
@@ -60,5 +60,29 @@ export function LoginForm() {
         {loading ? "Connexion..." : "Se connecter"}
       </Button>
     </form>
+  );
+}
+
+function LoginFormFallback() {
+  return (
+    <div className="space-y-5" aria-busy="true" aria-label="Chargement du formulaire">
+      <div className="space-y-2">
+        <div className="h-4 w-12 rounded bg-[#e8f0ed]" />
+        <div className="h-10 w-full rounded-2xl bg-[#e8f0ed]" />
+      </div>
+      <div className="space-y-2">
+        <div className="h-4 w-24 rounded bg-[#e8f0ed]" />
+        <div className="h-10 w-full rounded-2xl bg-[#e8f0ed]" />
+      </div>
+      <div className="h-11 w-full rounded-2xl bg-[#d4e5df]" />
+    </div>
+  );
+}
+
+export function LoginForm() {
+  return (
+    <Suspense fallback={<LoginFormFallback />}>
+      <LoginFormContent />
+    </Suspense>
   );
 }
