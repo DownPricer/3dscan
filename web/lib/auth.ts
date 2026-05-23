@@ -2,7 +2,7 @@ import "server-only";
 
 import bcrypt from "bcryptjs";
 import { SignJWT, jwtVerify } from "jose";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { NextRequest, NextResponse } from "next/server";
 import { sessionCookieName } from "@/lib/auth-constants";
@@ -109,9 +109,30 @@ export function sessionCookieOptions(request?: Request) {
   };
 }
 
+function requestFromForwardedHeaders(forwardedProto: string | null) {
+  if (!forwardedProto) return undefined;
+  return new Request("http://session.local", {
+    headers: { "x-forwarded-proto": forwardedProto },
+  });
+}
+
 export async function persistSessionCookie(token: string, request?: Request) {
+  const headersList = await headers();
+  const forwardedProto = headersList.get("x-forwarded-proto");
+  const effectiveRequest = request ?? requestFromForwardedHeaders(forwardedProto);
+  const options = sessionCookieOptions(effectiveRequest);
+
   const cookieStore = await cookies();
-  cookieStore.set(sessionCookieName, token, sessionCookieOptions(request));
+  cookieStore.set(sessionCookieName, token, options);
+
+  console.log("[auth] cookie set", {
+    name: sessionCookieName,
+    secure: options.secure,
+    path: options.path,
+    forwardedProto,
+  });
+
+  return { set: true, secure: options.secure, path: options.path };
 }
 
 export function setSessionCookie(response: NextResponse, token: string, request?: Request) {

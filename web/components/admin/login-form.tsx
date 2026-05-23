@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { Suspense, useActionState } from "react";
+import { Suspense, useActionState, useEffect } from "react";
 import { loginAction, type LoginState } from "@/app/admin/login/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,6 +13,12 @@ function LoginFormContent() {
   const searchParams = useSearchParams();
   const next = searchParams.get("next") ?? "/admin";
   const [state, formAction, pending] = useActionState(loginAction, initialState);
+
+  useEffect(() => {
+    if (!state.redirectTo) return;
+    console.log("[auth] client redirect", state.redirectTo);
+    window.location.assign(state.redirectTo);
+  }, [state.redirectTo]);
 
   return (
     <form action={formAction} className="space-y-5" noValidate>

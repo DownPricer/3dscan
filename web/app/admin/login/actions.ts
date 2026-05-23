@@ -1,6 +1,5 @@
 "use server";
 
-import { redirect } from "next/navigation";
 import {
   createSessionToken,
   persistSessionCookie,
@@ -10,6 +9,8 @@ import { prisma } from "@/lib/prisma";
 
 export type LoginState = {
   error: string | null;
+  /** Présent après succès — le client fait window.location (redirect() incompatible avec useActionState). */
+  redirectTo?: string;
 };
 
 function safeRedirectPath(next: string) {
@@ -17,15 +18,6 @@ function safeRedirectPath(next: string) {
     return next;
   }
   return "/admin";
-}
-
-function isRedirectError(error: unknown) {
-  return (
-    typeof error === "object" &&
-    error !== null &&
-    "digest" in error &&
-    String((error as { digest?: string }).digest).startsWith("NEXT_REDIRECT")
-  );
 }
 
 export async function loginAction(
@@ -38,7 +30,7 @@ export async function loginAction(
   const password = String(formData.get("password") ?? "");
   const next = safeRedirectPath(String(formData.get("next") ?? "/admin"));
 
-  console.log("[auth] login attempt", { email, next });
+  console.log("[auth] login attempt", { email, redirectTarget: next });
 
   if (!email || !password) {
     console.log("[auth] login failed: champs manquants");
@@ -61,15 +53,17 @@ export async function loginAction(
       role: user.role,
     });
 
-    await persistSessionCookie(token);
+    const cookieMeta = await persistSessionCookie(token);
 
-    console.log("[auth] login success", { email, redirect: next });
-    redirect(next);
+    console.log("[auth] login success", {
+      email,
+      redirectTarget: next,
+      cookieSet: cookieMeta.set,
+      cookieSecure: cookieMeta.secure,
+    });
+
+    return { error: null, redirectTo: next };
   } catch (error) {
-    if (isRedirectError(error)) {
-      throw error;
-    }
-
     console.error("[auth] login error", error);
     return { error: "Connexion impossible. Réessayez." };
   }
