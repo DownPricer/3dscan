@@ -1,0 +1,83 @@
+# OS / IDE
+*.DS_Store
+Thumbs.db
+*.idea/
+*.iml
+.vscode/
+*.swp
+*~
+
+# Android / Gradle
+*.apk
+*.ap_
+*.aab
+*.dex
+*.class
+local.properties
+.gradle/
+**/build/
+**/captures/
+**/externalNativeBuild/
+**/cxx/
+*.keystore
+!debug.keystore
+
+# ARCore natives extraites (regenerables)
+arcore/jni/x86
+arcore/jni/x86_64
+
+# Legacy patterns (conserver compatibilite)
+*bin/
+*gen/
+*release/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+venv/
+.venv/
+env/
+*.egg-info/
+.eggs/
+dist/
+*.egg
+
+# PC processor — sorties et runs (souvent > 1 Go)
+pc_processor/output_gui/
+pc_processor/output/*
+!pc_processor/output/.gitkeep
+pc_processor/logs/*
+!pc_processor/logs/.gitkeep
+pc_processor/native/build/
+pc_processor/**/*.ply
+pc_processor/**/*.obj
+pc_processor/**/*.glb
+pc_processor/**/*.zip
+!pc_processor/test_datasets/README.md
+
+# Builds / artefacts projet
+build-output/
+zip test/
+*.log
+*.tmp
+*.bak
+*.backup
+
+# Env et secrets
+.env
+.env.local
+.env.*.local
+*.pem
+credentials.json
+secrets/
+
+# Archives et media de test
+*.zip
+*.dataset/
+test_datasets/**/*.zip
+test_datasets/**/*.dataset
+
+# Meshroom cache local Windows
+MeshroomRuns/
