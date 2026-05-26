@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { CatalogStatus, ExternalListingStatus, PropertyStatus, VisitType } from "@prisma/client";
 import { Home, MapPin } from "lucide-react";
+import { unstable_noStore as noStore } from "next/cache";
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
@@ -15,6 +16,9 @@ type Props = {
   params: Promise<{ slug: string }>;
 };
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 function visitTypeLabel(type: VisitType) {
   if (type === VisitType.MODEL_3D) return "3D";
   if (type === VisitType.PANORAMA_360) return "360";
@@ -22,6 +26,7 @@ function visitTypeLabel(type: VisitType) {
 }
 
 export async function generateMetadata({ params }: Props) {
+  noStore();
   const { slug } = await params;
   const property = await prisma.property.findUnique({
     where: { slug },
@@ -42,6 +47,7 @@ export async function generateMetadata({ params }: Props) {
 }
 
 export default async function BienDetailPage({ params }: Props) {
+  noStore();
   const { slug } = await params;
   const property = await prisma.property.findUnique({
     where: { slug },

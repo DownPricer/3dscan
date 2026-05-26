@@ -1,11 +1,15 @@
 import Link from "next/link";
 import { CatalogStatus, ExternalListingStatus, PropertyStatus, VisitType } from "@prisma/client";
 import { ArrowRight, Home, MapPin } from "lucide-react";
+import { unstable_noStore as noStore } from "next/cache";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { prisma } from "@/lib/prisma";
 import { formatPrice } from "@/lib/utils";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 function visitTypeLabel(type: VisitType) {
   if (type === VisitType.MODEL_3D) return "3D";
@@ -19,6 +23,7 @@ export const metadata = {
 };
 
 export default async function HomePage() {
+  noStore();
   const properties = await prisma.property.findMany({
     where: {
       status: PropertyStatus.PUBLISHED,
