@@ -1,4 +1,4 @@
-import { ModelType, PropertyStatus, VisitType } from "@prisma/client";
+import { ExternalStatus, ModelType, PropertyStatus, VisitType } from "@prisma/client";
 import { z } from "zod";
 
 export const allowedPanoramaExtensions = [".jpg", ".jpeg", ".png"] as const;
@@ -43,6 +43,22 @@ export const propertySchema = z.object({
   modelType: z.nativeEnum(ModelType),
   visitType: z.nativeEnum(VisitType).default(VisitType.MODEL_3D),
   status: z.nativeEnum(PropertyStatus),
+  catalogEnabled: z.boolean().optional().default(false),
+  catalogTitle: z.string().trim().optional().or(z.literal("")),
+  catalogSubtitle: z.string().trim().optional().or(z.literal("")),
+  catalogPriceLabel: z.string().trim().optional().or(z.literal("")),
+  catalogCityLabel: z.string().trim().optional().or(z.literal("")),
+  catalogSurface: z.coerce.number().int().nonnegative().optional().or(z.literal("")),
+  catalogRooms: z.coerce.number().int().nonnegative().optional().or(z.literal("")),
+  catalogBedrooms: z.coerce.number().int().nonnegative().optional().or(z.literal("")),
+  catalogLandSurface: z.coerce.number().int().nonnegative().optional().or(z.literal("")),
+  catalogPropertyType: z.string().trim().optional().or(z.literal("")),
+  catalogTags: z.array(z.string().trim().min(1)).optional().default([]),
+  catalogFeatured: z.boolean().optional().default(false),
+  catalogSortOrder: z.coerce.number().int().optional().default(0),
+  externalUrl: z.string().trim().optional().or(z.literal("")),
+  externalSource: z.string().trim().optional().or(z.literal("")),
+  externalStatus: z.nativeEnum(ExternalStatus).optional(),
   panoramaScenes: z.array(panoramaSceneSchema).optional().default([]),
   hotspots: z.array(hotspotSchema).optional().default([]),
 });

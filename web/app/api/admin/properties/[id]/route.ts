@@ -75,6 +75,52 @@ export async function PATCH(request: NextRequest, { params }: Params) {
           ...("modelType" in parsed ? { modelType: parsed.modelType } : {}),
           ...("visitType" in parsed ? { visitType: parsed.visitType } : {}),
           ...("status" in parsed ? { status: parsed.status } : {}),
+          ...("catalogEnabled" in parsed ? { catalogEnabled: parsed.catalogEnabled } : {}),
+          ...("catalogTitle" in parsed
+            ? { catalogTitle: normalizeOptionalString(parsed.catalogTitle) }
+            : {}),
+          ...("catalogSubtitle" in parsed
+            ? { catalogSubtitle: normalizeOptionalString(parsed.catalogSubtitle) }
+            : {}),
+          ...("catalogPriceLabel" in parsed
+            ? { catalogPriceLabel: normalizeOptionalString(parsed.catalogPriceLabel) }
+            : {}),
+          ...("catalogCityLabel" in parsed
+            ? { catalogCityLabel: normalizeOptionalString(parsed.catalogCityLabel) }
+            : {}),
+          ...("catalogSurface" in parsed
+            ? { catalogSurface: parsed.catalogSurface === "" ? null : parsed.catalogSurface ?? null }
+            : {}),
+          ...("catalogRooms" in parsed
+            ? { catalogRooms: parsed.catalogRooms === "" ? null : parsed.catalogRooms ?? null }
+            : {}),
+          ...("catalogBedrooms" in parsed
+            ? {
+                catalogBedrooms:
+                  parsed.catalogBedrooms === "" ? null : parsed.catalogBedrooms ?? null,
+              }
+            : {}),
+          ...("catalogLandSurface" in parsed
+            ? {
+                catalogLandSurface:
+                  parsed.catalogLandSurface === "" ? null : parsed.catalogLandSurface ?? null,
+              }
+            : {}),
+          ...("catalogPropertyType" in parsed
+            ? { catalogPropertyType: normalizeOptionalString(parsed.catalogPropertyType) }
+            : {}),
+          ...("catalogTags" in parsed ? { catalogTags: parsed.catalogTags ?? [] } : {}),
+          ...("catalogFeatured" in parsed ? { catalogFeatured: parsed.catalogFeatured } : {}),
+          ...("catalogSortOrder" in parsed
+            ? { catalogSortOrder: parsed.catalogSortOrder ?? 0 }
+            : {}),
+          ...("externalUrl" in parsed
+            ? { externalUrl: normalizeOptionalString(parsed.externalUrl) }
+            : {}),
+          ...("externalSource" in parsed
+            ? { externalSource: normalizeOptionalString(parsed.externalSource) }
+            : {}),
+          ...("externalStatus" in parsed ? { externalStatus: parsed.externalStatus } : {}),
         },
       });
 
