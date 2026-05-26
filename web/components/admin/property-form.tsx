@@ -1,6 +1,6 @@
 "use client";
 
-import { VisitType } from "@prisma/client";
+import { CatalogStatus, ExternalListingSource, ExternalListingStatus, VisitType } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { FormEvent, useCallback, useRef, useState } from "react";
 import {
@@ -25,6 +25,23 @@ type PropertyFormValue = {
   price?: number | null;
   description?: string | null;
   coverImageUrl?: string | null;
+  catalogEnabled?: boolean | null;
+  catalogStatus?: CatalogStatus | null;
+  catalogTitle?: string | null;
+  catalogDescription?: string | null;
+  catalogPrice?: number | null;
+  catalogCity?: string | null;
+  catalogPostalCode?: string | null;
+  catalogSurface?: number | null;
+  catalogRooms?: number | null;
+  catalogBedrooms?: number | null;
+  catalogCoverImageUrl?: string | null;
+  externalListingUrl?: string | null;
+  externalListingSource?: ExternalListingSource | null;
+  externalListingStatus?: ExternalListingStatus | null;
+  externalLastCheckedAt?: string | Date | null;
+  externalLastStatusCode?: number | null;
+  externalLastError?: string | null;
   modelUrl: string;
   modelType: "GLB" | "GLTF" | "OBJ" | "ZIP";
   visitType?: VisitType;
@@ -57,6 +74,9 @@ export function PropertyForm({ property }: { property?: PropertyFormValue }) {
     modelUrl: property?.modelUrl ?? "",
     modelType: property?.modelType ?? "GLB",
   });
+  const [catalogCoverImageUrl, setCatalogCoverImageUrl] = useState<string | null>(
+    property?.catalogCoverImageUrl ?? property?.coverImageUrl ?? null,
+  );
   const [visitType, setVisitType] = useState<VisitType>(
     property?.visitType ?? VisitType.MODEL_3D,
   );
@@ -84,8 +104,10 @@ export function PropertyForm({ property }: { property?: PropertyFormValue }) {
   );
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState<string | null>(null);
+  const [uploadingCatalogCover, setUploadingCatalogCover] = useState(false);
   const [uploadingPanoramaIndex, setUploadingPanoramaIndex] = useState<number | null>(null);
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
+  const [checkingExternal, setCheckingExternal] = useState(false);
 
   function buildPayload(statusOverride?: "DRAFT" | "PUBLISHED") {
     const form = formRef.current;
@@ -99,6 +121,19 @@ export function PropertyForm({ property }: { property?: PropertyFormValue }) {
       price: formData.get("price") || "",
       description: formData.get("description"),
       coverImageUrl: uploadState.coverImageUrl ?? "",
+      catalogEnabled: formData.get("catalogEnabled") === "on",
+      catalogStatus: formData.get("catalogStatus") ?? CatalogStatus.DRAFT,
+      catalogTitle: formData.get("catalogTitle"),
+      catalogDescription: formData.get("catalogDescription"),
+      catalogPrice: formData.get("catalogPrice") || "",
+      catalogCity: formData.get("catalogCity"),
+      catalogPostalCode: formData.get("catalogPostalCode"),
+      catalogSurface: formData.get("catalogSurface") || "",
+      catalogRooms: formData.get("catalogRooms") || "",
+      catalogBedrooms: formData.get("catalogBedrooms") || "",
+      catalogCoverImageUrl: catalogCoverImageUrl ?? "",
+      externalListingUrl: formData.get("externalListingUrl"),
+      externalListingSource: formData.get("externalListingSource") ?? "",
       modelUrl: uploadState.modelUrl,
       modelType: uploadState.modelType,
       visitType,
@@ -220,6 +255,61 @@ export function PropertyForm({ property }: { property?: PropertyFormValue }) {
     return data.url;
   }
 
+  async function uploadCatalogCover(file: File) {
+    setUploadingCatalogCover(true);
+    setError(null);
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("kind", "cover");
+
+    let response: Response;
+    try {
+      response = await fetch("/api/admin/upload", { method: "POST", body: formData });
+    } catch {
+      setUploadingCatalogCover(false);
+      setError("Connexion interrompue pendant l'envoi. Vérifiez le réseau et réessayez.");
+      return;
+    }
+
+    setUploadingCatalogCover(false);
+
+    let data: { url?: string; error?: string };
+    try {
+      data = (await response.json()) as typeof data;
+    } catch {
+      setError(
+        response.status === 413
+          ? "Fichier trop volumineux pour le serveur. Essayez une image plus légère."
+          : "Réponse serveur invalide. Redémarrez `npm run dev` après une mise à jour du site.",
+      );
+      return;
+    }
+
+    if (!response.ok || !data.url) {
+      setError(formatAdminError(data.error ?? "Upload impossible."));
+      return;
+    }
+
+    setCatalogCoverImageUrl(data.url);
+  }
+
+  async function checkExternalNow() {
+    const id = propertyId ?? property?.id;
+    if (!id) return;
+    setCheckingExternal(true);
+    setError(null);
+    const response = await fetch(`/api/admin/properties/${id}/check-external`, {
+      method: "POST",
+    });
+    const data = (await response.json()) as { error?: string };
+    setCheckingExternal(false);
+    if (!response.ok) {
+      setError(formatAdminError(data.error ?? "Vérification impossible."));
+      return;
+    }
+    router.refresh();
+  }
+
   async function uploadPanorama(file: File, sceneIndex: number) {
     setUploadingPanoramaIndex(sceneIndex);
     setError(null);
@@ -274,76 +364,288 @@ export function PropertyForm({ property }: { property?: PropertyFormValue }) {
       onSubmit={submit}
       className="grid gap-6 lg:grid-cols-[1fr_320px] xl:grid-cols-[1fr_360px]"
     >
-      <Card className="space-y-5 bg-white">
-        <div className="grid gap-5 md:grid-cols-2">
-          <div className="space-y-2 md:col-span-2">
-            <Label htmlFor="name">Nom de la propriété *</Label>
-            <Input
-              id="name"
-              name="name"
-              defaultValue={property?.name}
-              required
-              onChange={(e) => setPropertyName(e.target.value)}
-            />
+      <div className="space-y-6">
+        <Card className="space-y-5 bg-white">
+          <div className="grid gap-5 md:grid-cols-2">
+            <div className="space-y-2 md:col-span-2">
+              <Label htmlFor="name">Nom de la propriété *</Label>
+              <Input
+                id="name"
+                name="name"
+                defaultValue={property?.name}
+                required
+                onChange={(e) => setPropertyName(e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="address">Adresse</Label>
+              <Input id="address" name="address" defaultValue={property?.address ?? ""} />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="city">Ville</Label>
+              <Input id="city" name="city" defaultValue={property?.city ?? ""} />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="postalCode">Code postal</Label>
+              <Input
+                id="postalCode"
+                name="postalCode"
+                defaultValue={property?.postalCode ?? ""}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="price">Prix du bien optionnel</Label>
+              <Input
+                id="price"
+                name="price"
+                type="number"
+                min="0"
+                defaultValue={property?.price ?? ""}
+              />
+            </div>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="address">Adresse</Label>
-            <Input id="address" name="address" defaultValue={property?.address ?? ""} />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="city">Ville</Label>
-            <Input id="city" name="city" defaultValue={property?.city ?? ""} />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="postalCode">Code postal</Label>
-            <Input
-              id="postalCode"
-              name="postalCode"
-              defaultValue={property?.postalCode ?? ""}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="price">Prix du bien optionnel</Label>
-            <Input
-              id="price"
-              name="price"
-              type="number"
-              min="0"
-              defaultValue={property?.price ?? ""}
-            />
-          </div>
-        </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="description">Description</Label>
-          <Textarea
-            id="description"
-            name="description"
-            defaultValue={property?.description ?? ""}
-            placeholder="Décrivez le bien, ses volumes, son emplacement..."
+          <div className="space-y-2">
+            <Label htmlFor="description">Description</Label>
+            <Textarea
+              id="description"
+              name="description"
+              defaultValue={property?.description ?? ""}
+              placeholder="Décrivez le bien, ses volumes, son emplacement..."
+            />
+          </div>
+        </Card>
+
+        <Card className="space-y-5 bg-white">
+          <div>
+            <h2 className="text-xl font-black text-[#0f2f3f]">Catalogue public</h2>
+            <p className="mt-1 text-sm text-[#667085]">
+              Ces informations sont utilisées pour la page catalogue (<code>/</code>) et la fiche
+              publique du bien (<code>/bien/[slug]</code>).
+            </p>
+          </div>
+
+          <div className="flex items-center justify-between gap-4 rounded-2xl border border-[#eee7dc] bg-[#f7f5f0]/60 p-4">
+            <div>
+              <p className="font-bold text-[#0f2f3f]">Afficher dans le catalogue</p>
+              <p className="text-sm text-[#667085]">
+                Si désactivé, le bien n’apparaît pas publiquement dans le catalogue.
+              </p>
+            </div>
+            <input
+              name="catalogEnabled"
+              type="checkbox"
+              defaultChecked={Boolean(property?.catalogEnabled)}
+              className="h-5 w-5 accent-[#2f6f5e]"
+            />
+          </div>
+
+          <div className="grid gap-5 md:grid-cols-2">
+            <div className="space-y-2 md:col-span-2">
+              <Label htmlFor="catalogStatus">Statut catalogue</Label>
+              <Select
+                id="catalogStatus"
+                name="catalogStatus"
+                defaultValue={property?.catalogStatus ?? CatalogStatus.DRAFT}
+              >
+                <option value={CatalogStatus.DRAFT}>Brouillon</option>
+                <option value={CatalogStatus.ONLINE}>En ligne</option>
+                <option value={CatalogStatus.EXTERNAL_DOWN}>Lien externe hors ligne</option>
+                <option value={CatalogStatus.HIDDEN}>Masqué</option>
+                <option value={CatalogStatus.SOLD}>Vendu</option>
+              </Select>
+            </div>
+
+            <div className="space-y-2 md:col-span-2">
+              <Label htmlFor="catalogTitle">Titre catalogue</Label>
+              <Input
+                id="catalogTitle"
+                name="catalogTitle"
+                defaultValue={property?.catalogTitle ?? ""}
+                placeholder="Ex. Maison familiale avec jardin"
+              />
+            </div>
+
+            <div className="space-y-2 md:col-span-2">
+              <Label htmlFor="catalogDescription">Description courte</Label>
+              <Textarea
+                id="catalogDescription"
+                name="catalogDescription"
+                defaultValue={property?.catalogDescription ?? ""}
+                placeholder="Résumé pour la carte et la fiche du bien..."
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="catalogPrice">Prix</Label>
+              <Input
+                id="catalogPrice"
+                name="catalogPrice"
+                type="number"
+                min="0"
+                defaultValue={property?.catalogPrice ?? ""}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="catalogCity">Ville</Label>
+              <Input
+                id="catalogCity"
+                name="catalogCity"
+                defaultValue={property?.catalogCity ?? ""}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="catalogPostalCode">Code postal</Label>
+              <Input
+                id="catalogPostalCode"
+                name="catalogPostalCode"
+                defaultValue={property?.catalogPostalCode ?? ""}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="catalogSurface">Surface (m²)</Label>
+              <Input
+                id="catalogSurface"
+                name="catalogSurface"
+                type="number"
+                min="0"
+                defaultValue={property?.catalogSurface ?? ""}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="catalogRooms">Pièces</Label>
+              <Input
+                id="catalogRooms"
+                name="catalogRooms"
+                type="number"
+                min="0"
+                defaultValue={property?.catalogRooms ?? ""}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="catalogBedrooms">Chambres</Label>
+              <Input
+                id="catalogBedrooms"
+                name="catalogBedrooms"
+                type="number"
+                min="0"
+                defaultValue={property?.catalogBedrooms ?? ""}
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="catalogCover">Image de couverture (catalogue)</Label>
+            <Input
+              id="catalogCover"
+              type="file"
+              accept=".jpg,.jpeg,.png,.webp"
+              disabled={uploadingCatalogCover}
+              onChange={(event) => {
+                const file = event.target.files?.[0];
+                if (file) void uploadCatalogCover(file);
+              }}
+            />
+            {catalogCoverImageUrl ? (
+              <p className="text-xs text-emerald-700">Couverture catalogue ajoutée</p>
+            ) : (
+              <p className="text-xs text-[#667085]">
+                Optionnel. Sinon, la couverture “visite” sera utilisée en fallback.
+              </p>
+            )}
+          </div>
+
+          <div className="grid gap-5 md:grid-cols-2">
+            <div className="space-y-2 md:col-span-2">
+              <Label htmlFor="externalListingUrl">Lien annonce externe (Leboncoin)</Label>
+              <Input
+                id="externalListingUrl"
+                name="externalListingUrl"
+                defaultValue={property?.externalListingUrl ?? ""}
+                placeholder="https://www.leboncoin.fr/..."
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="externalListingSource">Source externe</Label>
+              <Select
+                id="externalListingSource"
+                name="externalListingSource"
+                defaultValue={property?.externalListingSource ?? ""}
+              >
+                <option value="">Non renseignée</option>
+                <option value={ExternalListingSource.LEBONCOIN}>Leboncoin</option>
+                <option value={ExternalListingSource.OTHER}>Autre</option>
+              </Select>
+            </div>
+
+            <div className="flex items-end">
+              <Button
+                type="button"
+                variant="secondary"
+                className="w-full"
+                disabled={checkingExternal || !(propertyId ?? property?.id)}
+                onClick={() => void checkExternalNow()}
+              >
+                {checkingExternal ? "Vérification…" : "Tester le lien maintenant"}
+              </Button>
+            </div>
+          </div>
+
+          {property?.externalListingStatus ? (
+            <div className="rounded-2xl border border-[#eee7dc] bg-white p-4 text-sm text-[#475467]">
+              <p className="font-bold text-[#0f2f3f]">Statut du lien externe</p>
+              <div className="mt-2 grid gap-1">
+                <p>
+                  <span className="font-semibold">Statut :</span> {property.externalListingStatus}
+                </p>
+                <p>
+                  <span className="font-semibold">Dernier check :</span>{" "}
+                  {property.externalLastCheckedAt
+                    ? new Date(property.externalLastCheckedAt).toLocaleString()
+                    : "—"}
+                </p>
+                <p>
+                  <span className="font-semibold">Code HTTP :</span>{" "}
+                  {property.externalLastStatusCode ?? "—"}
+                </p>
+                {property.externalLastError ? (
+                  <p className="text-red-700">
+                    <span className="font-semibold">Erreur :</span> {property.externalLastError}
+                  </p>
+                ) : null}
+              </div>
+            </div>
+          ) : null}
+        </Card>
+
+        <Card className="space-y-5 bg-white">
+          <HybridTourWizard
+            visitType={visitType}
+            onVisitTypeChange={setVisitType}
+            modelUrl={uploadState.modelUrl}
+            modelType={uploadState.modelType}
+            onUploadModel={(files) => void upload(files, "model")}
+            uploadingModel={uploading === "model"}
+            panoramaScenes={panoramaScenes}
+            onPanoramaScenesChange={setPanoramaScenes}
+            hotspots={hotspots}
+            onHotspotsChange={setHotspots}
+            onUploadPanorama={uploadPanorama}
+            uploadingPanoramaIndex={uploadingPanoramaIndex}
+            propertyName={propertyName}
+            publicUrl={successUrl}
+            saveStatus={saveStatus}
+            onSaveAndContinue={saveDraft}
+            uploadError={error}
           />
-        </div>
-
-        <HybridTourWizard
-          visitType={visitType}
-          onVisitTypeChange={setVisitType}
-          modelUrl={uploadState.modelUrl}
-          modelType={uploadState.modelType}
-          onUploadModel={(files) => void upload(files, "model")}
-          uploadingModel={uploading === "model"}
-          panoramaScenes={panoramaScenes}
-          onPanoramaScenesChange={setPanoramaScenes}
-          hotspots={hotspots}
-          onHotspotsChange={setHotspots}
-          onUploadPanorama={uploadPanorama}
-          uploadingPanoramaIndex={uploadingPanoramaIndex}
-          propertyName={propertyName}
-          publicUrl={successUrl}
-          saveStatus={saveStatus}
-          onSaveAndContinue={saveDraft}
-          uploadError={error}
-        />
-      </Card>
+        </Card>
+      </div>
 
       <Card className="h-fit space-y-5 bg-white lg:sticky lg:top-6">
         <div>

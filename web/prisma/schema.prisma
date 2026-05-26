@@ -36,6 +36,26 @@ enum ExternalStatus {
   UNKNOWN
 }
 
+enum CatalogStatus {
+  DRAFT
+  ONLINE
+  EXTERNAL_DOWN
+  HIDDEN
+  SOLD
+}
+
+enum ExternalListingSource {
+  LEBONCOIN
+  OTHER
+}
+
+enum ExternalListingStatus {
+  UNKNOWN
+  ONLINE
+  OFFLINE
+  CHECK_ERROR
+}
+
 model User {
   id           String   @id @default(cuid())
   email        String   @unique
@@ -59,10 +79,15 @@ model Property {
   visitType      VisitType       @default(MODEL_3D)
   status         PropertyStatus  @default(DRAFT)
   catalogEnabled      Boolean        @default(false)
+  catalogStatus       CatalogStatus  @default(DRAFT)
   catalogTitle        String?
   catalogSubtitle     String?
   catalogPriceLabel   String?
   catalogCityLabel    String?
+  catalogDescription  String?
+  catalogPrice        Int?
+  catalogCity         String?
+  catalogPostalCode   String?
   catalogSurface      Int?
   catalogRooms        Int?
   catalogBedrooms     Int?
@@ -77,6 +102,11 @@ model Property {
   externalLastCheckedAt  DateTime?
   externalLastHttpStatus Int?
   externalLastError      String?
+  catalogCoverImageUrl     String?
+  externalListingUrl       String?
+  externalListingSource    ExternalListingSource?
+  externalListingStatus    ExternalListingStatus @default(UNKNOWN)
+  externalLastStatusCode   Int?
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
   panoramaScenes PanoramaScene[]

@@ -1,4 +1,12 @@
-import { ExternalStatus, ModelType, PropertyStatus, VisitType } from "@prisma/client";
+import {
+  CatalogStatus,
+  ExternalListingSource,
+  ExternalListingStatus,
+  ExternalStatus,
+  ModelType,
+  PropertyStatus,
+  VisitType,
+} from "@prisma/client";
 import { z } from "zod";
 
 export const allowedPanoramaExtensions = [".jpg", ".jpeg", ".png"] as const;
@@ -44,10 +52,15 @@ export const propertySchema = z.object({
   visitType: z.nativeEnum(VisitType).default(VisitType.MODEL_3D),
   status: z.nativeEnum(PropertyStatus),
   catalogEnabled: z.boolean().optional().default(false),
+  catalogStatus: z.nativeEnum(CatalogStatus).optional().default(CatalogStatus.DRAFT),
   catalogTitle: z.string().trim().optional().or(z.literal("")),
   catalogSubtitle: z.string().trim().optional().or(z.literal("")),
   catalogPriceLabel: z.string().trim().optional().or(z.literal("")),
   catalogCityLabel: z.string().trim().optional().or(z.literal("")),
+  catalogDescription: z.string().trim().optional().or(z.literal("")),
+  catalogPrice: z.coerce.number().int().nonnegative().optional().or(z.literal("")),
+  catalogCity: z.string().trim().optional().or(z.literal("")),
+  catalogPostalCode: z.string().trim().optional().or(z.literal("")),
   catalogSurface: z.coerce.number().int().nonnegative().optional().or(z.literal("")),
   catalogRooms: z.coerce.number().int().nonnegative().optional().or(z.literal("")),
   catalogBedrooms: z.coerce.number().int().nonnegative().optional().or(z.literal("")),
@@ -56,9 +69,27 @@ export const propertySchema = z.object({
   catalogTags: z.array(z.string().trim().min(1)).optional().default([]),
   catalogFeatured: z.boolean().optional().default(false),
   catalogSortOrder: z.coerce.number().int().optional().default(0),
-  externalUrl: z.string().trim().optional().or(z.literal("")),
+  externalUrl: z
+    .string()
+    .trim()
+    .optional()
+    .or(z.literal(""))
+    .refine((value) => !value || isHttpUrl(value), {
+      message: "URL externe invalide (http/https).",
+    }),
   externalSource: z.string().trim().optional().or(z.literal("")),
   externalStatus: z.nativeEnum(ExternalStatus).optional(),
+  catalogCoverImageUrl: z.string().trim().optional().or(z.literal("")),
+  externalListingUrl: z
+    .string()
+    .trim()
+    .optional()
+    .or(z.literal(""))
+    .refine((value) => !value || isHttpUrl(value), {
+      message: "URL de l'annonce externe invalide (http/https).",
+    }),
+  externalListingSource: z.nativeEnum(ExternalListingSource).optional().or(z.literal("")),
+  externalListingStatus: z.nativeEnum(ExternalListingStatus).optional(),
   panoramaScenes: z.array(panoramaSceneSchema).optional().default([]),
   hotspots: z.array(hotspotSchema).optional().default([]),
 });
@@ -74,6 +105,15 @@ export type PropertyInput = z.infer<typeof propertySchema>;
 export function normalizeOptionalString(value?: string | null) {
   const normalized = value?.trim();
   return normalized ? normalized : null;
+}
+
+export function isHttpUrl(value: string) {
+  try {
+    const url = new URL(value);
+    return url.protocol === "http:" || url.protocol === "https:";
+  } catch {
+    return false;
+  }
 }
 
 export function extensionOf(filename: string) {

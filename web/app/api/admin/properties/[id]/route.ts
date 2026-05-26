@@ -76,6 +76,7 @@ export async function PATCH(request: NextRequest, { params }: Params) {
           ...("visitType" in parsed ? { visitType: parsed.visitType } : {}),
           ...("status" in parsed ? { status: parsed.status } : {}),
           ...("catalogEnabled" in parsed ? { catalogEnabled: parsed.catalogEnabled } : {}),
+          ...("catalogStatus" in parsed ? { catalogStatus: parsed.catalogStatus } : {}),
           ...("catalogTitle" in parsed
             ? { catalogTitle: normalizeOptionalString(parsed.catalogTitle) }
             : {}),
@@ -87,6 +88,18 @@ export async function PATCH(request: NextRequest, { params }: Params) {
             : {}),
           ...("catalogCityLabel" in parsed
             ? { catalogCityLabel: normalizeOptionalString(parsed.catalogCityLabel) }
+            : {}),
+          ...("catalogDescription" in parsed
+            ? { catalogDescription: normalizeOptionalString(parsed.catalogDescription) }
+            : {}),
+          ...("catalogPrice" in parsed
+            ? { catalogPrice: parsed.catalogPrice === "" ? null : parsed.catalogPrice ?? null }
+            : {}),
+          ...("catalogCity" in parsed
+            ? { catalogCity: normalizeOptionalString(parsed.catalogCity) }
+            : {}),
+          ...("catalogPostalCode" in parsed
+            ? { catalogPostalCode: normalizeOptionalString(parsed.catalogPostalCode) }
             : {}),
           ...("catalogSurface" in parsed
             ? { catalogSurface: parsed.catalogSurface === "" ? null : parsed.catalogSurface ?? null }
@@ -121,6 +134,21 @@ export async function PATCH(request: NextRequest, { params }: Params) {
             ? { externalSource: normalizeOptionalString(parsed.externalSource) }
             : {}),
           ...("externalStatus" in parsed ? { externalStatus: parsed.externalStatus } : {}),
+          ...("catalogCoverImageUrl" in parsed
+            ? { catalogCoverImageUrl: normalizeOptionalString(parsed.catalogCoverImageUrl) }
+            : {}),
+          ...("externalListingUrl" in parsed
+            ? { externalListingUrl: normalizeOptionalString(parsed.externalListingUrl) }
+            : {}),
+          ...("externalListingSource" in parsed
+            ? {
+                externalListingSource:
+                  parsed.externalListingSource === "" ? null : parsed.externalListingSource,
+              }
+            : {}),
+          ...("externalListingStatus" in parsed
+            ? { externalListingStatus: parsed.externalListingStatus }
+            : {}),
         },
       });
 

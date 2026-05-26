@@ -1,178 +1,181 @@
 import Link from "next/link";
-import { ArrowRight, ShieldCheck, Sparkles } from "lucide-react";
+import { CatalogStatus, ExternalListingStatus, PropertyStatus, VisitType } from "@prisma/client";
+import { ArrowRight, Home, MapPin } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardDescription, CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
+import { prisma } from "@/lib/prisma";
+import { formatPrice } from "@/lib/utils";
 
-const steps = [
-  {
-    title: "On vient scanner le bien",
-    text: "Un scan 3D précis est réalisé sur place avec un flux pensé pour les maisons et appartements à vendre.",
-  },
-  {
-    title: "On met la visite 3D en ligne",
-    text: "Le modèle est optimisé puis publié sur une page claire, rapide et compatible mobile.",
-  },
-  {
-    title: "Vous partagez le lien",
-    text: "Le propriétaire ou l'agent envoie une URL unique aux acheteurs potentiels.",
-  },
-];
+function visitTypeLabel(type: VisitType) {
+  if (type === VisitType.MODEL_3D) return "3D";
+  if (type === VisitType.PANORAMA_360) return "360";
+  return "Hybride";
+}
 
-const benefits = [
-  "Réduction des visites inutiles",
-  "Expérience premium pour les acheteurs",
-  "Lien consultable sur mobile, tablette et ordinateur",
-  "Page publique unique pour chaque propriété",
-];
+export const metadata = {
+  title: "Catalogue — Visites virtuelles immobilières | Site Ready SHD",
+  description: "Découvrez des biens disponibles avec visite virtuelle immersive.",
+};
 
-const faqs = [
-  {
-    q: "Quel format 3D est recommandé ?",
-    a: "Le format GLB est conseillé pour un affichage web fiable, léger et simple à partager.",
-  },
-  {
-    q: "Les visites fonctionnent-elles sur téléphone ?",
-    a: "Oui, le viewer est tactile et responsive pour mobile, tablette et ordinateur.",
-  },
-  {
-    q: "Peut-on garder une visite en brouillon ?",
-    a: "Oui, l'admin peut préparer une propriété en brouillon avant publication.",
-  },
-];
+export default async function HomePage() {
+  const properties = await prisma.property.findMany({
+    where: {
+      status: PropertyStatus.PUBLISHED,
+      catalogEnabled: true,
+      catalogStatus: CatalogStatus.ONLINE,
+      NOT: { externalListingStatus: ExternalListingStatus.OFFLINE },
+    },
+    orderBy: [{ catalogSortOrder: "asc" }, { createdAt: "desc" }],
+    select: {
+      id: true,
+      slug: true,
+      name: true,
+      city: true,
+      postalCode: true,
+      price: true,
+      visitType: true,
+      coverImageUrl: true,
+      catalogTitle: true,
+      catalogDescription: true,
+      catalogPrice: true,
+      catalogCity: true,
+      catalogPostalCode: true,
+      catalogSurface: true,
+      catalogRooms: true,
+      catalogBedrooms: true,
+      catalogCoverImageUrl: true,
+      externalListingUrl: true,
+    },
+  });
 
-export default function HomePage() {
   return (
-    <main className="grain min-h-screen overflow-hidden">
+    <main className="grain min-h-screen overflow-hidden bg-[#f7f5f0]">
       <header className="relative z-10 mx-auto flex max-w-7xl items-center justify-between px-6 py-6">
         <Link href="/" className="text-lg font-black tracking-tight text-[#0f2f3f]">
           Site Ready SHD
         </Link>
-        <nav className="hidden items-center gap-6 text-sm font-medium text-[#475467] md:flex">
-          <a href="#fonctionnement">Fonctionnement</a>
-          <a href="#tarifs">Tarifs</a>
-          <a href="#faq">FAQ</a>
-        </nav>
-        <Button asChild variant="secondary" size="sm">
-          <Link href="/admin/login">Admin</Link>
-        </Button>
+        <div className="flex items-center gap-3">
+          <Button asChild variant="secondary" size="sm">
+            <Link href="/admin/login">Admin</Link>
+          </Button>
+        </div>
       </header>
 
-      <section className="relative mx-auto grid max-w-7xl gap-12 px-6 pb-20 pt-12 md:grid-cols-[1.05fr_.95fr] md:items-center md:pt-20">
-        <div className="relative z-10">
-          <div className="mb-5 inline-flex rounded-full border border-[#0f2f3f]/10 bg-white/70 px-4 py-2 text-sm font-semibold text-[#2f6f5e]">
-            Visites virtuelles 3D pour l'immobilier
-          </div>
-          <h1 className="max-w-4xl text-5xl font-black leading-[0.95] tracking-[-0.04em] text-[#0f2f3f] md:text-7xl">
-            Faites visiter un bien avant même le premier rendez-vous.
-          </h1>
-          <p className="mt-6 max-w-2xl text-lg leading-8 text-[#475467]">
-            Site Ready SHD scanne en 3D maisons et appartements à vendre, puis
-            publie une visite virtuelle partageable avec vos acheteurs depuis
-            leur téléphone ou ordinateur.
-          </p>
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <Button asChild size="lg">
-              <a href="mailto:contact@sitereadyshd.com">
-                Demander une visite 3D <ArrowRight size={18} />
-              </a>
-            </Button>
-            <Button asChild variant="secondary" size="lg">
-              <a href="#fonctionnement">Voir le fonctionnement</a>
-            </Button>
-          </div>
-        </div>
-
-        <div className="premium-card relative min-h-[430px] overflow-hidden rounded-[2.5rem] p-6">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(47,111,94,.28),transparent_24rem)]" />
-          <div className="relative flex h-full flex-col justify-between rounded-[2rem] bg-[#0f2f3f] p-6 text-white shadow-2xl">
-            <div className="flex items-center justify-between">
-              <span className="rounded-full bg-white/12 px-4 py-2 text-sm">Visite immersive</span>
-              <Sparkles className="text-[#a7d7c5]" />
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="h-28 rounded-3xl bg-white/10" />
-              <div className="h-28 rounded-3xl bg-[#a7d7c5]/30" />
-              <div className="col-span-2 h-40 rounded-3xl border border-white/15 bg-white/10 p-4">
-                <div className="h-full rounded-2xl border border-dashed border-white/25 bg-black/10" />
-              </div>
-            </div>
-            <div>
-              <p className="text-sm uppercase tracking-[0.3em] text-white/60">Lien public</p>
-              <p className="mt-2 break-all text-lg font-semibold">
-                visite-virtuelle.sitereadyshd.com/villa-cote-jardin
-              </p>
+      <section className="mx-auto max-w-7xl px-6 pb-10 pt-6 md:pb-14 md:pt-10">
+        <div className="premium-card relative overflow-hidden rounded-[2.5rem] p-8 md:p-12">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(47,111,94,.24),transparent_34rem)]" />
+          <div className="relative">
+            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[#2f6f5e]">
+              Catalogue de biens en visite virtuelle
+            </p>
+            <h1 className="mt-3 max-w-4xl text-4xl font-black tracking-tight text-[#0f2f3f] md:text-6xl">
+              Découvrez des biens avec visite virtuelle immersive.
+            </h1>
+            <p className="mt-4 max-w-2xl text-base leading-7 text-[#475467] md:text-lg">
+              Parcourez les annonces disponibles, puis lancez la visite 3D/360 pour vous projeter
+              avant même le rendez-vous.
+            </p>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <Button asChild size="lg" variant="secondary">
+                <a href="mailto:contact@sitereadyshd.com">
+                  Vous voulez mettre votre maison en visite virtuelle ? <ArrowRight size={18} />
+                </a>
+              </Button>
             </div>
           </div>
         </div>
       </section>
 
-      <section id="fonctionnement" className="mx-auto max-w-7xl px-6 py-16">
-        <div className="mb-10 max-w-2xl">
-          <p className="font-semibold text-[#2f6f5e]">Simple pour vous</p>
-          <h2 className="mt-2 text-4xl font-black tracking-tight text-[#0f2f3f]">
-            Une visite en ligne en trois étapes.
-          </h2>
-        </div>
-        <div className="grid gap-5 md:grid-cols-3">
-          {steps.map((step, index) => (
-            <Card key={step.title}>
-              <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#0f2f3f] text-lg font-bold text-white">
-                {index + 1}
-              </div>
-              <CardTitle>{step.title}</CardTitle>
-              <CardDescription className="mt-3 leading-6">{step.text}</CardDescription>
-            </Card>
-          ))}
-        </div>
-      </section>
-
-      <section className="mx-auto grid max-w-7xl gap-8 px-6 py-16 md:grid-cols-2">
-        <div>
-          <p className="font-semibold text-[#2f6f5e]">Avantages</p>
-          <h2 className="mt-2 text-4xl font-black tracking-tight text-[#0f2f3f]">
-            Une expérience plus efficace pour vendre.
-          </h2>
-        </div>
-        <div className="grid gap-4">
-          {benefits.map((benefit) => (
-            <div key={benefit} className="flex items-center gap-3 rounded-3xl bg-white/70 p-4">
-              <ShieldCheck className="text-[#2f6f5e]" />
-              <span className="font-semibold text-[#17252f]">{benefit}</span>
+      <section className="mx-auto max-w-7xl px-6 pb-16">
+        {properties.length === 0 ? (
+          <Card className="bg-white">
+            <h2 className="text-2xl font-black text-[#0f2f3f]">
+              Aucune visite disponible pour le moment.
+            </h2>
+            <p className="mt-2 text-[#667085]">
+              Vous êtes propriétaire ? Ajoutez une visite virtuelle 3D/360 à votre annonce et donnez
+              plus envie aux acheteurs.
+            </p>
+            <div className="mt-6">
+              <Button asChild>
+                <a href="mailto:contact@sitereadyshd.com">
+                  Mettre mon bien en ligne <ArrowRight size={18} />
+                </a>
+              </Button>
             </div>
-          ))}
-        </div>
-      </section>
+          </Card>
+        ) : (
+          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+            {properties.map((property) => {
+              const title = property.catalogTitle ?? property.name;
+              const displayPrice = property.catalogPrice ?? property.price ?? null;
+              const city = property.catalogCity ?? property.city ?? null;
+              const postal = property.catalogPostalCode ?? property.postalCode ?? null;
+              const location = [city, postal].filter(Boolean).join(" ");
+              const cover = property.catalogCoverImageUrl ?? property.coverImageUrl ?? null;
 
-      <section id="tarifs" className="mx-auto max-w-7xl px-6 py-16">
-        <div className="premium-card rounded-[2.5rem] p-8 md:p-10">
-          <p className="font-semibold text-[#2f6f5e]">Tarifs</p>
-          <h2 className="mt-2 text-4xl font-black tracking-tight text-[#0f2f3f]">
-            Offres ajustables selon la surface et la zone.
-          </h2>
-          <div className="mt-8 grid gap-5 md:grid-cols-3">
-            {["Appartement", "Maison", "Agence"].map((plan) => (
-              <Card key={plan} className="bg-white">
-                <CardTitle>{plan}</CardTitle>
-                <p className="mt-4 text-3xl font-black text-[#0f2f3f]">Sur devis</p>
-                <CardDescription className="mt-3">
-                  Placeholder modifiable depuis le code ou une future table de configuration.
-                </CardDescription>
-              </Card>
-            ))}
+              return (
+                <Card key={property.id} className="bg-white p-0 overflow-hidden">
+                  <div className="relative h-44 w-full overflow-hidden bg-[#0f2f3f]/5">
+                    {cover ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={cover}
+                        alt={title}
+                        className="h-full w-full object-cover"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center">
+                        <Home className="text-[#0f2f3f]/30" size={42} />
+                      </div>
+                    )}
+                    <div className="absolute left-4 top-4 flex flex-wrap gap-2">
+                      <Badge>Visite virtuelle</Badge>
+                      <Badge variant="published">{visitTypeLabel(property.visitType)}</Badge>
+                    </div>
+                  </div>
+
+                  <div className="p-6">
+                    <p className="text-2xl font-black text-[#0f2f3f]">
+                      {displayPrice != null ? formatPrice(displayPrice) : "Prix sur demande"}
+                    </p>
+                    <h2 className="mt-2 text-lg font-bold text-[#0f2f3f]">{title}</h2>
+                    {location ? (
+                      <p className="mt-2 flex items-center gap-2 text-sm text-[#667085]">
+                        <MapPin size={16} /> {location}
+                      </p>
+                    ) : null}
+                    <div className="mt-4 flex flex-wrap gap-3 text-sm text-[#475467]">
+                      {property.catalogSurface ? <span>{property.catalogSurface} m²</span> : null}
+                      {property.catalogRooms ? <span>{property.catalogRooms} pièces</span> : null}
+                      {property.catalogBedrooms ? (
+                        <span>{property.catalogBedrooms} ch.</span>
+                      ) : null}
+                    </div>
+
+                    <div className="mt-6 grid gap-3">
+                      <Button asChild>
+                        <Link href={`/bien/${property.slug}`}>Voir le bien</Link>
+                      </Button>
+                      <Button asChild variant="secondary">
+                        <Link href={`/visite/${property.slug}`}>Visite virtuelle</Link>
+                      </Button>
+                      {property.externalListingUrl ? (
+                        <Button asChild variant="secondary">
+                          <a href={property.externalListingUrl} target="_blank" rel="noreferrer">
+                            Voir l’annonce Leboncoin
+                          </a>
+                        </Button>
+                      ) : null}
+                    </div>
+                  </div>
+                </Card>
+              );
+            })}
           </div>
-        </div>
-      </section>
-
-      <section id="faq" className="mx-auto max-w-4xl px-6 py-16">
-        <h2 className="text-4xl font-black tracking-tight text-[#0f2f3f]">FAQ</h2>
-        <div className="mt-8 space-y-4">
-          {faqs.map((faq) => (
-            <Card key={faq.q} className="bg-white/80">
-              <CardTitle>{faq.q}</CardTitle>
-              <CardDescription className="mt-2 leading-6">{faq.a}</CardDescription>
-            </Card>
-          ))}
-        </div>
+        )}
       </section>
 
       <footer className="mx-auto flex max-w-7xl flex-col gap-4 px-6 py-10 text-sm text-[#667085] md:flex-row md:items-center md:justify-between">

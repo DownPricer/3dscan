@@ -23,10 +23,15 @@ function normalizePropertyPayload(input: unknown) {
       visitType: parsed.visitType,
       status: parsed.status,
       catalogEnabled: parsed.catalogEnabled ?? false,
+      catalogStatus: parsed.catalogStatus,
       catalogTitle: normalizeOptionalString(parsed.catalogTitle),
       catalogSubtitle: normalizeOptionalString(parsed.catalogSubtitle),
       catalogPriceLabel: normalizeOptionalString(parsed.catalogPriceLabel),
       catalogCityLabel: normalizeOptionalString(parsed.catalogCityLabel),
+      catalogDescription: normalizeOptionalString(parsed.catalogDescription),
+      catalogPrice: parsed.catalogPrice === "" ? null : parsed.catalogPrice ?? null,
+      catalogCity: normalizeOptionalString(parsed.catalogCity),
+      catalogPostalCode: normalizeOptionalString(parsed.catalogPostalCode),
       catalogSurface: parsed.catalogSurface === "" ? null : parsed.catalogSurface ?? null,
       catalogRooms: parsed.catalogRooms === "" ? null : parsed.catalogRooms ?? null,
       catalogBedrooms: parsed.catalogBedrooms === "" ? null : parsed.catalogBedrooms ?? null,
@@ -39,6 +44,17 @@ function normalizePropertyPayload(input: unknown) {
       externalUrl: normalizeOptionalString(parsed.externalUrl),
       externalSource: normalizeOptionalString(parsed.externalSource),
       ...(parsed.externalStatus ? { externalStatus: parsed.externalStatus } : {}),
+      catalogCoverImageUrl: normalizeOptionalString(parsed.catalogCoverImageUrl),
+      externalListingUrl: normalizeOptionalString(parsed.externalListingUrl),
+      ...("externalListingSource" in parsed
+        ? {
+            externalListingSource:
+              parsed.externalListingSource === "" ? null : parsed.externalListingSource,
+          }
+        : {}),
+      ...(parsed.externalListingStatus
+        ? { externalListingStatus: parsed.externalListingStatus }
+        : {}),
     },
     panoramaScenes: parsed.panoramaScenes ?? [],
     hotspots: parsed.hotspots ?? [],
