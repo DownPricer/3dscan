@@ -60,6 +60,17 @@ type PropertyFormValue = {
   matterportZipOriginalName?: string | null;
   matterportImportStatus?: MatterportImportStatus | null;
   matterportImportError?: string | null;
+  matterportLocalManifestUrl?: string | null;
+  matterportAuditReportUrl?: string | null;
+  matterportAuditSummary?: {
+    totalFiles?: number;
+    imageCount?: number;
+    panoramaCandidates?: number;
+    cubeFaceSetCandidates?: number;
+    scanPointsFound?: number;
+    hasFloorplan?: boolean;
+    hasMesh?: boolean;
+  } | null;
   status: "DRAFT" | "PUBLISHED";
   slug?: string;
   panoramaScenes?: { id: string; name: string; imageUrl: string; sortOrder: number }[];
@@ -120,6 +131,15 @@ export function PropertyForm({ property }: { property?: PropertyFormValue }) {
   const [matterportImportError, setMatterportImportError] = useState<string | null>(
     property?.matterportImportError ?? null,
   );
+  const [matterportLocalManifestUrl, setMatterportLocalManifestUrl] = useState<string | null>(
+    property?.matterportLocalManifestUrl ?? null,
+  );
+  const [matterportAuditReportUrl, setMatterportAuditReportUrl] = useState<string | null>(
+    property?.matterportAuditReportUrl ?? null,
+  );
+  const [matterportAuditSummary, setMatterportAuditSummary] = useState<
+    PropertyFormValue["matterportAuditSummary"]
+  >(property?.matterportAuditSummary ?? null);
   const [matterportZipSelected, setMatterportZipSelected] = useState<File | null>(null);
   const [matterportZipUploading, setMatterportZipUploading] = useState(false);
   const [panoramaScenes, setPanoramaScenes] = useState<PanoramaSceneInput[]>(
@@ -194,6 +214,9 @@ export function PropertyForm({ property }: { property?: PropertyFormValue }) {
       matterportZipOriginalName: matterportZipOriginalName ?? "",
       matterportImportStatus,
       matterportImportError: matterportImportError ?? "",
+      matterportLocalManifestUrl: matterportLocalManifestUrl ?? "",
+      matterportAuditReportUrl: matterportAuditReportUrl ?? "",
+      matterportAuditSummary,
       panoramaScenes,
       hotspots,
     };
@@ -207,9 +230,9 @@ export function PropertyForm({ property }: { property?: PropertyFormValue }) {
       return false;
     }
     if (visitType === VisitType.MATTERPORT) {
-      const embed = (matterportEmbedUrl ?? matterportUrl ?? "").trim();
-      if (!embed) {
-        setError("Ajoutez un lien Matterport ou un code iframe avant d'enregistrer.");
+      const displaySource = (matterportEmbedUrl ?? matterportUrl ?? uploadState.modelUrl ?? "").trim();
+      if (!displaySource) {
+        setError("Ajoutez un lien Matterport, un code iframe ou un import local avant d'enregistrer.");
         setSaveStatus("error");
         return false;
       }
@@ -364,6 +387,9 @@ export function PropertyForm({ property }: { property?: PropertyFormValue }) {
           importMode?: MatterportImportMode;
           importStatus?: MatterportImportStatus;
           importError?: string | null;
+          localManifestUrl?: string;
+          auditReportUrl?: string;
+          auditSummary?: PropertyFormValue["matterportAuditSummary"];
         }
       | { ok: false; error: string };
 
@@ -381,6 +407,9 @@ export function PropertyForm({ property }: { property?: PropertyFormValue }) {
     setMatterportImportMode(data.importMode ?? MatterportImportMode.MATTERPAK_UNKNOWN);
     setMatterportImportStatus(data.importStatus ?? MatterportImportStatus.READY);
     setMatterportImportError(data.importError ?? null);
+    setMatterportLocalManifestUrl(data.localManifestUrl ?? null);
+    setMatterportAuditReportUrl(data.auditReportUrl ?? null);
+    setMatterportAuditSummary(data.auditSummary ?? null);
 
     if (data.modelUrl && data.modelType) {
       setUploadState((current) => ({
@@ -396,6 +425,9 @@ export function PropertyForm({ property }: { property?: PropertyFormValue }) {
     setMatterportImportMode(MatterportImportMode.EMBED);
     setMatterportImportStatus(MatterportImportStatus.READY);
     setMatterportImportError(null);
+    setMatterportLocalManifestUrl(null);
+    setMatterportAuditReportUrl(null);
+    setMatterportAuditSummary(null);
 
     if (!value.trim()) {
       setMatterportUrl(null);
@@ -791,7 +823,7 @@ export function PropertyForm({ property }: { property?: PropertyFormValue }) {
             onVisitTypeChange={setVisitType}
             modelUrl={
               visitType === VisitType.MATTERPORT
-                ? (matterportEmbedUrl ?? matterportUrl ?? "")
+                ? (matterportEmbedUrl ?? matterportUrl ?? uploadState.modelUrl)
                 : uploadState.modelUrl
             }
             modelType={visitType === VisitType.MATTERPORT ? "ZIP" : uploadState.modelType}
@@ -909,15 +941,54 @@ export function PropertyForm({ property }: { property?: PropertyFormValue }) {
                   </p>
                 ) : null}
                 <p className="text-xs text-[#667085]">
-                  Extraction serveur vers <code>/uploads/matterport/&lt;id&gt;/</code>. Seuls certains
-                  formats sont autorisés. Si le ZIP ne contient pas d’OBJ/GLB, il sera marqué comme
-                  non supporté.
+                  Extraction serveur vers <code>/uploads/matterport/&lt;id&gt;/</code>. Les backups
+                  Matterport internes sont maintenant audités : OBJ/GLB si présents, sinon tentative
+                  de visite 360 locale depuis les images.
                 </p>
                 {matterportImportStatus !== MatterportImportStatus.NONE ? (
-                  <p className="text-xs font-semibold text-[#475467]">
-                    Statut import : {matterportImportStatus}
-                    {matterportZipOriginalName ? ` — ${matterportZipOriginalName}` : ""}
-                  </p>
+                  <div className="rounded-2xl border border-[#eee7dc] bg-[#f7f5f0]/60 p-4 text-xs text-[#475467]">
+                    <p className="font-semibold">
+                      Statut import : {matterportImportStatus}
+                      {matterportZipOriginalName ? ` — ${matterportZipOriginalName}` : ""}
+                    </p>
+                    {matterportAuditSummary ? (
+                      <div className="mt-3 grid gap-1 sm:grid-cols-2">
+                        <p>Fichiers analysés : {matterportAuditSummary.totalFiles ?? 0}</p>
+                        <p>Images : {matterportAuditSummary.imageCount ?? 0}</p>
+                        <p>
+                          Panoramas candidats :{" "}
+                          {(matterportAuditSummary.panoramaCandidates ?? 0) +
+                            (matterportAuditSummary.cubeFaceSetCandidates ?? 0)}
+                        </p>
+                        <p>Scan points : {matterportAuditSummary.scanPointsFound ?? 0}</p>
+                        <p>Plan détecté : {matterportAuditSummary.hasFloorplan ? "oui" : "non"}</p>
+                        <p>Mesh détecté : {matterportAuditSummary.hasMesh ? "oui" : "non"}</p>
+                        <p className="sm:col-span-2">
+                          Mode généré :{" "}
+                          {matterportImportMode === MatterportImportMode.LOCAL_BACKUP_VIEWER
+                            ? "Visite 360 locale"
+                            : matterportImportMode === MatterportImportMode.MATTERPAK_OBJ
+                              ? "Modèle 3D local"
+                              : matterportImportStatus === MatterportImportStatus.UNSUPPORTED
+                                ? "Backup non exploitable"
+                                : "Analyse terminée"}
+                        </p>
+                      </div>
+                    ) : null}
+                    {matterportAuditReportUrl ? (
+                      <a
+                        className="mt-3 inline-block font-bold text-[#2f6f5e] underline"
+                        href={matterportAuditReportUrl}
+                        target="_blank"
+                      >
+                        Télécharger le rapport d’audit
+                      </a>
+                    ) : null}
+                    <p className="mt-3 text-[#667085]">
+                      Ce rendu local peut être différent de Matterport car le format backup est
+                      propriétaire.
+                    </p>
+                  </div>
                 ) : null}
               </div>
             </div>
@@ -994,7 +1065,7 @@ export function PropertyForm({ property }: { property?: PropertyFormValue }) {
           disabled={
             loading ||
             (visitType === VisitType.MATTERPORT
-              ? !(matterportEmbedUrl ?? matterportUrl ?? "").trim()
+              ? !(matterportEmbedUrl ?? matterportUrl ?? uploadState.modelUrl).trim()
               : !uploadState.modelUrl)
           }
           onClick={() => void saveDraft()}
@@ -1010,7 +1081,7 @@ export function PropertyForm({ property }: { property?: PropertyFormValue }) {
           disabled={
             loading ||
             (visitType === VisitType.MATTERPORT
-              ? !(matterportEmbedUrl ?? matterportUrl ?? "").trim()
+              ? !(matterportEmbedUrl ?? matterportUrl ?? uploadState.modelUrl).trim()
               : !uploadState.modelUrl)
           }
         >
@@ -1026,7 +1097,7 @@ export function PropertyForm({ property }: { property?: PropertyFormValue }) {
           disabled={
             loading ||
             (visitType === VisitType.MATTERPORT
-              ? !(matterportEmbedUrl ?? matterportUrl ?? "").trim()
+              ? !(matterportEmbedUrl ?? matterportUrl ?? uploadState.modelUrl).trim()
               : !uploadState.modelUrl)
           }
         >

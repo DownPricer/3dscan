@@ -1,0 +1,414 @@
+# Matterport Backup Deep Audit
+
+Source: 55 Petit Mayard (3).zip
+Généré: 2026-05-28T14:53:28.660Z
+
+## Résumé
+- Fichiers analysés: 176
+- Taille totale extraite: 271334651 octets
+- Images: 133
+- Panoramas 2:1 candidats: 6
+- Groupes cube faces candidats: 12
+- Scan points reconstruits: 0
+- Plan/floorplan détecté: oui
+- Mesh standard détecté: non
+- Coordonnées/poses candidates: indices seulement
+
+## Extensions
+- .dam: 6
+- .jpg: 126
+- .mfst: 1
+- .mmp: 13
+- .pb: 13
+- .png: 7
+- .swl: 6
+- .txt: 1
+- (none): 3
+
+## Arborescence complète
+- Backup/backup_data (86016 octets, sqlite, magic 53 51 4c 69 74 65 20 66 6f 72 6d 61 74 20 33 00)
+- Backup/backup_data-shm (32768 octets, unknown, magic 18 e2 2d 00 00 00 00 00 15 00 00 00 01 00 00 10)
+- Backup/backup_data-wal (420272 octets, unknown, magic 37 7f 06 82 00 2d e2 18 00 00 10 00 00 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/01000000-0000-0000-0100-000000000000.mmp (126 octets, matterport-binary-candidate, magic 0a 10 01 00 00 00 00 00 00 00 01 00 00 00 00 00)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/01000000-0020-fa01-0000-000000000000.mmp (629530 octets, matterport-binary-candidate, magic 0a 10 01 00 00 00 00 20 fa 01 00 00 00 00 00 00)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/01000000-0020-fa01-0000-000000000000.mmp.png (360500 octets, png, magic 89 50 4e 47 0d 0a 1a 0a 00 00 00 0d 49 48 44 52)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/01000000-0237-b590-0000-000000000000.mmp (211383 octets, matterport-binary-candidate, magic 0a 10 01 00 00 00 02 37 b5 90 00 00 00 00 00 00)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/01000000-0237-b590-0000-000000000000.mmp.png (126850 octets, png, magic 89 50 4e 47 0d 0a 1a 0a 00 00 00 0d 49 48 44 52)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/01000000-2676-b268-0000-000000000000.mmp (46214 octets, matterport-binary-candidate, magic 0a 10 01 00 00 00 26 76 b2 68 00 00 00 00 00 00)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/01000000-2676-b268-0000-000000000000.mmp.png (27754 octets, png, magic 89 50 4e 47 0d 0a 1a 0a 00 00 00 0d 49 48 44 52)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/01000000-6c3c-9e0e-0000-000000000000.mmp (90497 octets, matterport-binary-candidate, magic 0a 10 01 00 00 00 6c 3c 9e 0e 00 00 00 00 00 00)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/01000000-6c3c-9e0e-0000-000000000000.mmp.png (57320 octets, png, magic 89 50 4e 47 0d 0a 1a 0a 00 00 00 0d 49 48 44 52)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/01000000-b34a-f183-0000-000000000000.mmp (1077 octets, matterport-binary-candidate, magic 0a 10 01 00 00 00 b3 4a f1 83 00 00 00 00 00 00)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/01000000-b34a-f183-0000-000000000000.mmp.png (1677 octets, png, magic 89 50 4e 47 0d 0a 1a 0a 00 00 00 0d 49 48 44 52)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/01000000-da91-a234-0000-000000000000.mmp (27165 octets, matterport-binary-candidate, magic 0a 10 01 00 00 00 da 91 a2 34 00 00 00 00 00 00)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/01000000-da91-a234-0000-000000000000.mmp.png (19362 octets, png, magic 89 50 4e 47 0d 0a 1a 0a 00 00 00 0d 49 48 44 52)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/317750fe-7f06-4276-a0d3-be9f467c76f3_location_data.pb (848 octets, matterport-binary-candidate, magic 0a 33 09 00 00 00 00 00 5c 97 40 11 00 50 55 c3)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/317750fe-7f06-4276-a0d3-be9f467c76f3_sweep_cloud.pb (2638606 octets, matterport-binary-candidate, magic 08 88 0e 10 00 18 88 0e 3a 3e 0d b5 c8 36 3f 15)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/317750fe-7f06-4276-a0d3-be9f467c76f3_sweep_features.pb (791592 octets, matterport-binary-candidate, magic 0a 10 31 77 50 fe 7f 06 42 76 a0 d3 be 9f 46 7c)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/317750fe-7f06-4276-a0d3-be9f467c76f3.mmp (486742 octets, matterport-binary-candidate, magic 0a 10 31 77 50 fe 7f 06 42 76 a0 d3 be 9f 46 7c)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/317750fe-7f06-4276-a0d3-be9f467c76f3.swl (21512251 octets, matterport-binary-candidate, magic 0a 10 31 77 50 fe 7f 06 42 76 a0 d3 be 9f 46 7c)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/317750fe7f064276a0d3be9f467c76f3_128_000.jpg (3922 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/317750fe7f064276a0d3be9f467c76f3_128_001.jpg (6336 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/317750fe7f064276a0d3be9f467c76f3_128_002.jpg (6793 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/317750fe7f064276a0d3be9f467c76f3_128_003.jpg (6045 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/317750fe7f064276a0d3be9f467c76f3_128_004.jpg (6851 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/317750fe7f064276a0d3be9f467c76f3_128_005.jpg (4893 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/317750fe7f064276a0d3be9f467c76f3_256_000.jpg (9455 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/317750fe7f064276a0d3be9f467c76f3_256_001.jpg (17552 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/317750fe7f064276a0d3be9f467c76f3_256_002.jpg (19229 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/317750fe7f064276a0d3be9f467c76f3_256_003.jpg (17543 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/317750fe7f064276a0d3be9f467c76f3_256_004.jpg (19313 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/317750fe7f064276a0d3be9f467c76f3_256_005.jpg (13597 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/317750fe7f064276a0d3be9f467c76f3_512_000.jpg (24722 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/317750fe7f064276a0d3be9f467c76f3_512_001.jpg (47655 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/317750fe7f064276a0d3be9f467c76f3_512_002.jpg (52813 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/317750fe7f064276a0d3be9f467c76f3_512_003.jpg (49547 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/317750fe7f064276a0d3be9f467c76f3_512_004.jpg (53756 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/317750fe7f064276a0d3be9f467c76f3_512_005.jpg (37350 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/317750fe7f064276a0d3be9f467c76f3.dam (209001 octets, matterport-binary-candidate, magic 0a a1 4b 0a fa 35 0a ac 20 00 c0 9b be 00 00 68)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/3875faa4-3d52-4d68-9a77-debf11f39f58_sweep_cloud.pb (2679438 octets, matterport-binary-candidate, magic 08 88 0e 10 00 18 88 0e 3a 3e 0d 65 3b 3f 3f 15)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/3875faa4-3d52-4d68-9a77-debf11f39f58_sweep_features.pb (879504 octets, matterport-binary-candidate, magic 0a 10 38 75 fa a4 3d 52 4d 68 9a 77 de bf 11 f3)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/3875faa4-3d52-4d68-9a77-debf11f39f58.mmp (370731 octets, matterport-binary-candidate, magic 0a 10 38 75 fa a4 3d 52 4d 68 9a 77 de bf 11 f3)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/3875faa4-3d52-4d68-9a77-debf11f39f58.swl (21385566 octets, matterport-binary-candidate, magic 0a 10 38 75 fa a4 3d 52 4d 68 9a 77 de bf 11 f3)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/3875faa43d524d689a77debf11f39f58_128_000.jpg (3886 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/3875faa43d524d689a77debf11f39f58_128_001.jpg (7342 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/3875faa43d524d689a77debf11f39f58_128_002.jpg (5587 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/3875faa43d524d689a77debf11f39f58_128_003.jpg (4692 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/3875faa43d524d689a77debf11f39f58_128_004.jpg (5939 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/3875faa43d524d689a77debf11f39f58_128_005.jpg (5697 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/3875faa43d524d689a77debf11f39f58_256_000.jpg (10212 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/3875faa43d524d689a77debf11f39f58_256_001.jpg (20964 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/3875faa43d524d689a77debf11f39f58_256_002.jpg (15210 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/3875faa43d524d689a77debf11f39f58_256_003.jpg (12303 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/3875faa43d524d689a77debf11f39f58_256_004.jpg (16483 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/3875faa43d524d689a77debf11f39f58_256_005.jpg (15200 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/3875faa43d524d689a77debf11f39f58_512_000.jpg (29209 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/3875faa43d524d689a77debf11f39f58_512_001.jpg (58360 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/3875faa43d524d689a77debf11f39f58_512_002.jpg (40993 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/3875faa43d524d689a77debf11f39f58_512_003.jpg (32373 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/3875faa43d524d689a77debf11f39f58_512_004.jpg (45808 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/3875faa43d524d689a77debf11f39f58_512_005.jpg (40826 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/3875faa43d524d689a77debf11f39f58.dam (213102 octets, matterport-binary-candidate, magic 0a f9 5c 0a ba 42 0a ec 27 00 40 ea 3e 00 00 52)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/4921ed0e-8849-40b9-970b-1ccf9bf63d2c_sweep_cloud.pb (2643214 octets, matterport-binary-candidate, magic 08 88 0e 10 00 18 88 0e 3a 3e 0d 4c 37 49 3f 15)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/4921ed0e-8849-40b9-970b-1ccf9bf63d2c_sweep_features.pb (741864 octets, matterport-binary-candidate, magic 0a 10 49 21 ed 0e 88 49 40 b9 97 0b 1c cf 9b f6)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/4921ed0e-8849-40b9-970b-1ccf9bf63d2c.mmp (505654 octets, matterport-binary-candidate, magic 0a 10 49 21 ed 0e 88 49 40 b9 97 0b 1c cf 9b f6)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/4921ed0e-8849-40b9-970b-1ccf9bf63d2c.swl (21173068 octets, matterport-binary-candidate, magic 0a 10 49 21 ed 0e 88 49 40 b9 97 0b 1c cf 9b f6)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/4921ed0e884940b9970b1ccf9bf63d2c_128_000.jpg (3125 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/4921ed0e884940b9970b1ccf9bf63d2c_128_001.jpg (5463 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/4921ed0e884940b9970b1ccf9bf63d2c_128_002.jpg (6590 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/4921ed0e884940b9970b1ccf9bf63d2c_128_003.jpg (6473 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/4921ed0e884940b9970b1ccf9bf63d2c_128_004.jpg (6157 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/4921ed0e884940b9970b1ccf9bf63d2c_128_005.jpg (4777 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/4921ed0e884940b9970b1ccf9bf63d2c_256_000.jpg (7800 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/4921ed0e884940b9970b1ccf9bf63d2c_256_001.jpg (15250 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/4921ed0e884940b9970b1ccf9bf63d2c_256_002.jpg (18623 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/4921ed0e884940b9970b1ccf9bf63d2c_256_003.jpg (18290 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/4921ed0e884940b9970b1ccf9bf63d2c_256_004.jpg (17571 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/4921ed0e884940b9970b1ccf9bf63d2c_256_005.jpg (12324 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/4921ed0e884940b9970b1ccf9bf63d2c_512_000.jpg (21694 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/4921ed0e884940b9970b1ccf9bf63d2c_512_001.jpg (42494 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/4921ed0e884940b9970b1ccf9bf63d2c_512_002.jpg (51370 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/4921ed0e884940b9970b1ccf9bf63d2c_512_003.jpg (51305 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/4921ed0e884940b9970b1ccf9bf63d2c_512_004.jpg (49791 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/4921ed0e884940b9970b1ccf9bf63d2c_512_005.jpg (32933 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/4921ed0e884940b9970b1ccf9bf63d2c.dam (215503 octets, matterport-binary-candidate, magic 0a 9a 5e 0a c6 43 0a c0 28 00 40 d3 be 00 80 72)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/6c3be552-b258-40dd-9d57-d045d973ee1d_sweep_cloud.pb (2650254 octets, matterport-binary-candidate, magic 08 88 0e 10 00 18 88 0e 3a 3e 0d 98 6e 32 3f 15)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/6c3be552-b258-40dd-9d57-d045d973ee1d_sweep_features.pb (910806 octets, matterport-binary-candidate, magic 0a 10 6c 3b e5 52 b2 58 40 dd 9d 57 d0 45 d9 73)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/6c3be552-b258-40dd-9d57-d045d973ee1d.mmp (282756 octets, matterport-binary-candidate, magic 0a 10 6c 3b e5 52 b2 58 40 dd 9d 57 d0 45 d9 73)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/6c3be552-b258-40dd-9d57-d045d973ee1d.swl (23035436 octets, matterport-binary-candidate, magic 0a 10 6c 3b e5 52 b2 58 40 dd 9d 57 d0 45 d9 73)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/6c3be552b25840dd9d57d045d973ee1d_128_000.jpg (4569 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/6c3be552b25840dd9d57d045d973ee1d_128_001.jpg (6249 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/6c3be552b25840dd9d57d045d973ee1d_128_002.jpg (6028 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/6c3be552b25840dd9d57d045d973ee1d_128_003.jpg (5862 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/6c3be552b25840dd9d57d045d973ee1d_128_004.jpg (7097 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/6c3be552b25840dd9d57d045d973ee1d_128_005.jpg (5573 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/6c3be552b25840dd9d57d045d973ee1d_256_000.jpg (11774 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/6c3be552b25840dd9d57d045d973ee1d_256_001.jpg (17577 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/6c3be552b25840dd9d57d045d973ee1d_256_002.jpg (16709 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/6c3be552b25840dd9d57d045d973ee1d_256_003.jpg (15353 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/6c3be552b25840dd9d57d045d973ee1d_256_004.jpg (20489 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/6c3be552b25840dd9d57d045d973ee1d_256_005.jpg (14693 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/6c3be552b25840dd9d57d045d973ee1d_512_000.jpg (33547 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/6c3be552b25840dd9d57d045d973ee1d_512_001.jpg (48236 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/6c3be552b25840dd9d57d045d973ee1d_512_002.jpg (46635 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/6c3be552b25840dd9d57d045d973ee1d_512_003.jpg (40829 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/6c3be552b25840dd9d57d045d973ee1d_512_004.jpg (57014 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/6c3be552b25840dd9d57d045d973ee1d_512_005.jpg (39291 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/6c3be552b25840dd9d57d045d973ee1d.dam (210409 octets, matterport-binary-candidate, magic 0a a1 69 0a b6 4a 0a d0 2c 00 20 13 3f 00 80 06)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/7187a7b1-752a-49cc-8ef1-d54a81de74e0_sweep_cloud.pb (2672590 octets, matterport-binary-candidate, magic 08 88 0e 10 00 18 88 0e 3a 3e 0d 65 3b 3f 3f 15)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/7187a7b1-752a-49cc-8ef1-d54a81de74e0_sweep_features.pb (879060 octets, matterport-binary-candidate, magic 0a 10 71 87 a7 b1 75 2a 49 cc 8e f1 d5 4a 81 de)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/7187a7b1-752a-49cc-8ef1-d54a81de74e0.mmp (368911 octets, matterport-binary-candidate, magic 0a 10 71 87 a7 b1 75 2a 49 cc 8e f1 d5 4a 81 de)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/7187a7b1-752a-49cc-8ef1-d54a81de74e0.swl (21485719 octets, matterport-binary-candidate, magic 0a 10 71 87 a7 b1 75 2a 49 cc 8e f1 d5 4a 81 de)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/7187a7b1752a49cc8ef1d54a81de74e0_128_000.jpg (3895 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/7187a7b1752a49cc8ef1d54a81de74e0_128_001.jpg (7300 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/7187a7b1752a49cc8ef1d54a81de74e0_128_002.jpg (5597 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/7187a7b1752a49cc8ef1d54a81de74e0_128_003.jpg (4693 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/7187a7b1752a49cc8ef1d54a81de74e0_128_004.jpg (5960 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/7187a7b1752a49cc8ef1d54a81de74e0_128_005.jpg (5762 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/7187a7b1752a49cc8ef1d54a81de74e0_256_000.jpg (10288 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/7187a7b1752a49cc8ef1d54a81de74e0_256_001.jpg (20988 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/7187a7b1752a49cc8ef1d54a81de74e0_256_002.jpg (15223 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/7187a7b1752a49cc8ef1d54a81de74e0_256_003.jpg (12280 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/7187a7b1752a49cc8ef1d54a81de74e0_256_004.jpg (16507 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/7187a7b1752a49cc8ef1d54a81de74e0_256_005.jpg (15400 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/7187a7b1752a49cc8ef1d54a81de74e0_512_000.jpg (29211 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/7187a7b1752a49cc8ef1d54a81de74e0_512_001.jpg (58667 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/7187a7b1752a49cc8ef1d54a81de74e0_512_002.jpg (41101 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/7187a7b1752a49cc8ef1d54a81de74e0_512_003.jpg (32397 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/7187a7b1752a49cc8ef1d54a81de74e0_512_004.jpg (45815 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/7187a7b1752a49cc8ef1d54a81de74e0_512_005.jpg (41273 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/7187a7b1752a49cc8ef1d54a81de74e0.dam (211522 octets, matterport-binary-candidate, magic 0a 9e 59 0a d2 3f 0a 94 26 00 a0 2d bf 00 40 f0)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051-c6d5-45ec-b782-f2012a3f2c25_skybox_seg0.jpg (2030 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051-c6d5-45ec-b782-f2012a3f2c25_skybox_seg1.jpg (2892 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051-c6d5-45ec-b782-f2012a3f2c25_skybox_seg2.jpg (2545 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051-c6d5-45ec-b782-f2012a3f2c25_skybox_seg3.jpg (2479 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051-c6d5-45ec-b782-f2012a3f2c25_skybox_seg4.jpg (2434 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051-c6d5-45ec-b782-f2012a3f2c25_skybox_seg5.jpg (2635 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051-c6d5-45ec-b782-f2012a3f2c25_skybox0.jpg (34329 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051-c6d5-45ec-b782-f2012a3f2c25_skybox1.jpg (66296 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051-c6d5-45ec-b782-f2012a3f2c25_skybox2.jpg (54930 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051-c6d5-45ec-b782-f2012a3f2c25_skybox3.jpg (51422 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051-c6d5-45ec-b782-f2012a3f2c25_skybox4.jpg (50658 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051-c6d5-45ec-b782-f2012a3f2c25_skybox5.jpg (49446 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051-c6d5-45ec-b782-f2012a3f2c25_sweep_cloud.pb (2623182 octets, matterport-binary-candidate, magic 08 88 0e 10 00 18 88 0e 3a 3e 0d a2 45 56 3f 15)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051-c6d5-45ec-b782-f2012a3f2c25_sweep_features.pb (776052 octets, matterport-binary-candidate, magic 0a 10 f6 11 40 51 c6 d5 45 ec b7 82 f2 01 2a 3f)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051-c6d5-45ec-b782-f2012a3f2c25.mmp (415424 octets, matterport-binary-candidate, magic 0a 10 f6 11 40 51 c6 d5 45 ec b7 82 f2 01 2a 3f)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051-c6d5-45ec-b782-f2012a3f2c25.swl (19228665 octets, matterport-binary-candidate, magic 0a 10 f6 11 40 51 c6 d5 45 ec b7 82 f2 01 2a 3f)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051c6d545ecb782f2012a3f2c25_128_000.jpg (3307 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051c6d545ecb782f2012a3f2c25_128_001.jpg (5735 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051c6d545ecb782f2012a3f2c25_128_002.jpg (5088 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051c6d545ecb782f2012a3f2c25_128_003.jpg (4600 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051c6d545ecb782f2012a3f2c25_128_004.jpg (4660 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051c6d545ecb782f2012a3f2c25_128_005.jpg (4877 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051c6d545ecb782f2012a3f2c25_256_000.jpg (8200 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051c6d545ecb782f2012a3f2c25_256_001.jpg (16051 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051c6d545ecb782f2012a3f2c25_256_002.jpg (13654 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051c6d545ecb782f2012a3f2c25_256_003.jpg (12408 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051c6d545ecb782f2012a3f2c25_256_004.jpg (12364 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051c6d545ecb782f2012a3f2c25_256_005.jpg (12760 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051c6d545ecb782f2012a3f2c25_512_000.jpg (22212 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051c6d545ecb782f2012a3f2c25_512_001.jpg (44811 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051c6d545ecb782f2012a3f2c25_512_002.jpg (37114 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051c6d545ecb782f2012a3f2c25_512_003.jpg (34545 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051c6d545ecb782f2012a3f2c25_512_004.jpg (33618 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051c6d545ecb782f2012a3f2c25_512_005.jpg (33896 octets, jpeg, magic ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051c6d545ecb782f2012a3f2c25.dam (213541 octets, matterport-binary-candidate, magic 0a 84 61 0a a2 45 0a c4 29 00 00 04 3d 00 40 36)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/Floors/27c5b9fe-893b-4f6b-bdbe-3370fb71815f/19e4a8ec546.png (584005 octets, png, magic 89 50 4e 47 0d 0a 1a 0a 00 00 00 0d 49 48 44 52)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/Floors/ScanLocal/2574784d-c8a7-4408-9eed-fe6453c8ad86_c798050d-e10c-43fa-a102-0514aff28f1c.jpg (20764867 octets, jpeg, magic ff d8 ff e1 05 c7 45 78 69 66 00 00 49 49 2a 00)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/Floors/ScanLocal/3e5ac72a-132b-4b4b-a127-c7b499dcf244_8f89e7c3-18de-45bf-822a-ef7003f7def8.jpg (18728983 octets, jpeg, magic ff d8 ff e1 05 c7 45 78 69 66 00 00 49 49 2a 00)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/Floors/ScanLocal/6ad986b9-72e0-46e2-8d00-4ac6d0f20185_08984137-42e5-48d3-be92-e3e66a8d6749.jpg (19214699 octets, jpeg, magic ff d8 ff e1 05 c7 45 78 69 66 00 00 49 49 2a 00)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/Floors/ScanLocal/7fb56fe5-2fbe-4b07-b852-64a75abc7485_d0ad30c4-c970-48c1-bbb9-6f8e8b1210e2.jpg (16794649 octets, jpeg, magic ff d8 ff e1 05 c7 45 78 69 66 00 00 49 49 2a 00)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/Floors/ScanLocal/a5462ae2-a96c-46d7-80a9-a14a9742de69_2d6104d6-43a4-471f-b987-8d1328c48375.jpg (19019313 octets, jpeg, magic ff d8 ff e1 05 c7 45 78 69 66 00 00 49 49 2a 00)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/Floors/ScanLocal/f5a4d288-b52f-41e8-8bc0-976e988b0666_8e4652de-55bb-430c-9a6e-f1400bed5b49.jpg (19120118 octets, jpeg, magic ff d8 ff e1 05 c7 45 78 69 66 00 00 49 49 2a 00)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/job-log.txt (1191 octets, txt, magic 32 30 32 36 2d 30 35 2d 32 31 20 31 34 3a 34 32)
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/manifest.mfst (14940 octets, mfst, magic 0a e4 02 0a 10 31 77 50 fe 7f 06 42 76 a0 d3 be)
+
+## Images analysées
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/01000000-0020-fa01-0000-000000000000.mmp.png: 512x512, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/01000000-0237-b590-0000-000000000000.mmp.png: 512x512, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/01000000-2676-b268-0000-000000000000.mmp.png: 512x512, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/01000000-6c3c-9e0e-0000-000000000000.mmp.png: 512x512, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/01000000-b34a-f183-0000-000000000000.mmp.png: 512x512, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/01000000-da91-a234-0000-000000000000.mmp.png: 512x512, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/317750fe7f064276a0d3be9f467c76f3_128_000.jpg: 128x128, ratio 1:1, thumbnail
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/317750fe7f064276a0d3be9f467c76f3_128_001.jpg: 128x128, ratio 1:1, thumbnail
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/317750fe7f064276a0d3be9f467c76f3_128_002.jpg: 128x128, ratio 1:1, thumbnail
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/317750fe7f064276a0d3be9f467c76f3_128_003.jpg: 128x128, ratio 1:1, thumbnail
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/317750fe7f064276a0d3be9f467c76f3_128_004.jpg: 128x128, ratio 1:1, thumbnail
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/317750fe7f064276a0d3be9f467c76f3_128_005.jpg: 128x128, ratio 1:1, thumbnail
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/317750fe7f064276a0d3be9f467c76f3_256_000.jpg: 256x256, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/317750fe7f064276a0d3be9f467c76f3_256_001.jpg: 256x256, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/317750fe7f064276a0d3be9f467c76f3_256_002.jpg: 256x256, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/317750fe7f064276a0d3be9f467c76f3_256_003.jpg: 256x256, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/317750fe7f064276a0d3be9f467c76f3_256_004.jpg: 256x256, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/317750fe7f064276a0d3be9f467c76f3_256_005.jpg: 256x256, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/317750fe7f064276a0d3be9f467c76f3_512_000.jpg: 512x512, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/317750fe7f064276a0d3be9f467c76f3_512_001.jpg: 512x512, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/317750fe7f064276a0d3be9f467c76f3_512_002.jpg: 512x512, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/317750fe7f064276a0d3be9f467c76f3_512_003.jpg: 512x512, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/317750fe7f064276a0d3be9f467c76f3_512_004.jpg: 512x512, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/317750fe7f064276a0d3be9f467c76f3_512_005.jpg: 512x512, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/3875faa43d524d689a77debf11f39f58_128_000.jpg: 128x128, ratio 1:1, thumbnail
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/3875faa43d524d689a77debf11f39f58_128_001.jpg: 128x128, ratio 1:1, thumbnail
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/3875faa43d524d689a77debf11f39f58_128_002.jpg: 128x128, ratio 1:1, thumbnail
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/3875faa43d524d689a77debf11f39f58_128_003.jpg: 128x128, ratio 1:1, thumbnail
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/3875faa43d524d689a77debf11f39f58_128_004.jpg: 128x128, ratio 1:1, thumbnail
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/3875faa43d524d689a77debf11f39f58_128_005.jpg: 128x128, ratio 1:1, thumbnail
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/3875faa43d524d689a77debf11f39f58_256_000.jpg: 256x256, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/3875faa43d524d689a77debf11f39f58_256_001.jpg: 256x256, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/3875faa43d524d689a77debf11f39f58_256_002.jpg: 256x256, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/3875faa43d524d689a77debf11f39f58_256_003.jpg: 256x256, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/3875faa43d524d689a77debf11f39f58_256_004.jpg: 256x256, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/3875faa43d524d689a77debf11f39f58_256_005.jpg: 256x256, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/3875faa43d524d689a77debf11f39f58_512_000.jpg: 512x512, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/3875faa43d524d689a77debf11f39f58_512_001.jpg: 512x512, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/3875faa43d524d689a77debf11f39f58_512_002.jpg: 512x512, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/3875faa43d524d689a77debf11f39f58_512_003.jpg: 512x512, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/3875faa43d524d689a77debf11f39f58_512_004.jpg: 512x512, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/3875faa43d524d689a77debf11f39f58_512_005.jpg: 512x512, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/4921ed0e884940b9970b1ccf9bf63d2c_128_000.jpg: 128x128, ratio 1:1, thumbnail
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/4921ed0e884940b9970b1ccf9bf63d2c_128_001.jpg: 128x128, ratio 1:1, thumbnail
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/4921ed0e884940b9970b1ccf9bf63d2c_128_002.jpg: 128x128, ratio 1:1, thumbnail
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/4921ed0e884940b9970b1ccf9bf63d2c_128_003.jpg: 128x128, ratio 1:1, thumbnail
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/4921ed0e884940b9970b1ccf9bf63d2c_128_004.jpg: 128x128, ratio 1:1, thumbnail
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/4921ed0e884940b9970b1ccf9bf63d2c_128_005.jpg: 128x128, ratio 1:1, thumbnail
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/4921ed0e884940b9970b1ccf9bf63d2c_256_000.jpg: 256x256, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/4921ed0e884940b9970b1ccf9bf63d2c_256_001.jpg: 256x256, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/4921ed0e884940b9970b1ccf9bf63d2c_256_002.jpg: 256x256, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/4921ed0e884940b9970b1ccf9bf63d2c_256_003.jpg: 256x256, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/4921ed0e884940b9970b1ccf9bf63d2c_256_004.jpg: 256x256, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/4921ed0e884940b9970b1ccf9bf63d2c_256_005.jpg: 256x256, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/4921ed0e884940b9970b1ccf9bf63d2c_512_000.jpg: 512x512, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/4921ed0e884940b9970b1ccf9bf63d2c_512_001.jpg: 512x512, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/4921ed0e884940b9970b1ccf9bf63d2c_512_002.jpg: 512x512, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/4921ed0e884940b9970b1ccf9bf63d2c_512_003.jpg: 512x512, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/4921ed0e884940b9970b1ccf9bf63d2c_512_004.jpg: 512x512, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/4921ed0e884940b9970b1ccf9bf63d2c_512_005.jpg: 512x512, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/6c3be552b25840dd9d57d045d973ee1d_128_000.jpg: 128x128, ratio 1:1, thumbnail
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/6c3be552b25840dd9d57d045d973ee1d_128_001.jpg: 128x128, ratio 1:1, thumbnail
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/6c3be552b25840dd9d57d045d973ee1d_128_002.jpg: 128x128, ratio 1:1, thumbnail
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/6c3be552b25840dd9d57d045d973ee1d_128_003.jpg: 128x128, ratio 1:1, thumbnail
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/6c3be552b25840dd9d57d045d973ee1d_128_004.jpg: 128x128, ratio 1:1, thumbnail
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/6c3be552b25840dd9d57d045d973ee1d_128_005.jpg: 128x128, ratio 1:1, thumbnail
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/6c3be552b25840dd9d57d045d973ee1d_256_000.jpg: 256x256, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/6c3be552b25840dd9d57d045d973ee1d_256_001.jpg: 256x256, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/6c3be552b25840dd9d57d045d973ee1d_256_002.jpg: 256x256, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/6c3be552b25840dd9d57d045d973ee1d_256_003.jpg: 256x256, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/6c3be552b25840dd9d57d045d973ee1d_256_004.jpg: 256x256, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/6c3be552b25840dd9d57d045d973ee1d_256_005.jpg: 256x256, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/6c3be552b25840dd9d57d045d973ee1d_512_000.jpg: 512x512, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/6c3be552b25840dd9d57d045d973ee1d_512_001.jpg: 512x512, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/6c3be552b25840dd9d57d045d973ee1d_512_002.jpg: 512x512, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/6c3be552b25840dd9d57d045d973ee1d_512_003.jpg: 512x512, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/6c3be552b25840dd9d57d045d973ee1d_512_004.jpg: 512x512, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/6c3be552b25840dd9d57d045d973ee1d_512_005.jpg: 512x512, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/7187a7b1752a49cc8ef1d54a81de74e0_128_000.jpg: 128x128, ratio 1:1, thumbnail
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/7187a7b1752a49cc8ef1d54a81de74e0_128_001.jpg: 128x128, ratio 1:1, thumbnail
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/7187a7b1752a49cc8ef1d54a81de74e0_128_002.jpg: 128x128, ratio 1:1, thumbnail
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/7187a7b1752a49cc8ef1d54a81de74e0_128_003.jpg: 128x128, ratio 1:1, thumbnail
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/7187a7b1752a49cc8ef1d54a81de74e0_128_004.jpg: 128x128, ratio 1:1, thumbnail
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/7187a7b1752a49cc8ef1d54a81de74e0_128_005.jpg: 128x128, ratio 1:1, thumbnail
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/7187a7b1752a49cc8ef1d54a81de74e0_256_000.jpg: 256x256, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/7187a7b1752a49cc8ef1d54a81de74e0_256_001.jpg: 256x256, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/7187a7b1752a49cc8ef1d54a81de74e0_256_002.jpg: 256x256, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/7187a7b1752a49cc8ef1d54a81de74e0_256_003.jpg: 256x256, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/7187a7b1752a49cc8ef1d54a81de74e0_256_004.jpg: 256x256, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/7187a7b1752a49cc8ef1d54a81de74e0_256_005.jpg: 256x256, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/7187a7b1752a49cc8ef1d54a81de74e0_512_000.jpg: 512x512, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/7187a7b1752a49cc8ef1d54a81de74e0_512_001.jpg: 512x512, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/7187a7b1752a49cc8ef1d54a81de74e0_512_002.jpg: 512x512, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/7187a7b1752a49cc8ef1d54a81de74e0_512_003.jpg: 512x512, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/7187a7b1752a49cc8ef1d54a81de74e0_512_004.jpg: 512x512, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/7187a7b1752a49cc8ef1d54a81de74e0_512_005.jpg: 512x512, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051-c6d5-45ec-b782-f2012a3f2c25_skybox_seg0.jpg: 60x60, ratio 1:1, thumbnail
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051-c6d5-45ec-b782-f2012a3f2c25_skybox_seg1.jpg: 60x60, ratio 1:1, thumbnail
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051-c6d5-45ec-b782-f2012a3f2c25_skybox_seg2.jpg: 60x60, ratio 1:1, thumbnail
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051-c6d5-45ec-b782-f2012a3f2c25_skybox_seg3.jpg: 60x60, ratio 1:1, thumbnail
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051-c6d5-45ec-b782-f2012a3f2c25_skybox_seg4.jpg: 60x60, ratio 1:1, thumbnail
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051-c6d5-45ec-b782-f2012a3f2c25_skybox_seg5.jpg: 60x60, ratio 1:1, thumbnail
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051-c6d5-45ec-b782-f2012a3f2c25_skybox0.jpg: 512x512, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051-c6d5-45ec-b782-f2012a3f2c25_skybox1.jpg: 512x512, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051-c6d5-45ec-b782-f2012a3f2c25_skybox2.jpg: 512x512, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051-c6d5-45ec-b782-f2012a3f2c25_skybox3.jpg: 512x512, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051-c6d5-45ec-b782-f2012a3f2c25_skybox4.jpg: 512x512, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051-c6d5-45ec-b782-f2012a3f2c25_skybox5.jpg: 512x512, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051c6d545ecb782f2012a3f2c25_128_000.jpg: 128x128, ratio 1:1, thumbnail
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051c6d545ecb782f2012a3f2c25_128_001.jpg: 128x128, ratio 1:1, thumbnail
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051c6d545ecb782f2012a3f2c25_128_002.jpg: 128x128, ratio 1:1, thumbnail
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051c6d545ecb782f2012a3f2c25_128_003.jpg: 128x128, ratio 1:1, thumbnail
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051c6d545ecb782f2012a3f2c25_128_004.jpg: 128x128, ratio 1:1, thumbnail
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051c6d545ecb782f2012a3f2c25_128_005.jpg: 128x128, ratio 1:1, thumbnail
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051c6d545ecb782f2012a3f2c25_256_000.jpg: 256x256, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051c6d545ecb782f2012a3f2c25_256_001.jpg: 256x256, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051c6d545ecb782f2012a3f2c25_256_002.jpg: 256x256, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051c6d545ecb782f2012a3f2c25_256_003.jpg: 256x256, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051c6d545ecb782f2012a3f2c25_256_004.jpg: 256x256, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051c6d545ecb782f2012a3f2c25_256_005.jpg: 256x256, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051c6d545ecb782f2012a3f2c25_512_000.jpg: 512x512, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051c6d545ecb782f2012a3f2c25_512_001.jpg: 512x512, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051c6d545ecb782f2012a3f2c25_512_002.jpg: 512x512, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051c6d545ecb782f2012a3f2c25_512_003.jpg: 512x512, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051c6d545ecb782f2012a3f2c25_512_004.jpg: 512x512, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051c6d545ecb782f2012a3f2c25_512_005.jpg: 512x512, ratio 1:1, cube_face_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/Floors/27c5b9fe-893b-4f6b-bdbe-3370fb71815f/19e4a8ec546.png: 860x632, ratio 1.361:1, thumbnail
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/Floors/ScanLocal/2574784d-c8a7-4408-9eed-fe6453c8ad86_c798050d-e10c-43fa-a102-0514aff28f1c.jpg: 11904x5952, ratio 2:1, equirectangular_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/Floors/ScanLocal/3e5ac72a-132b-4b4b-a127-c7b499dcf244_8f89e7c3-18de-45bf-822a-ef7003f7def8.jpg: 11904x5952, ratio 2:1, equirectangular_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/Floors/ScanLocal/6ad986b9-72e0-46e2-8d00-4ac6d0f20185_08984137-42e5-48d3-be92-e3e66a8d6749.jpg: 11904x5952, ratio 2:1, equirectangular_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/Floors/ScanLocal/7fb56fe5-2fbe-4b07-b852-64a75abc7485_d0ad30c4-c970-48c1-bbb9-6f8e8b1210e2.jpg: 11904x5952, ratio 2:1, equirectangular_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/Floors/ScanLocal/a5462ae2-a96c-46d7-80a9-a14a9742de69_2d6104d6-43a4-471f-b987-8d1328c48375.jpg: 11904x5952, ratio 2:1, equirectangular_candidate
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/Floors/ScanLocal/f5a4d288-b52f-41e8-8bc0-976e988b0666_8e4652de-55bb-430c-9a6e-f1400bed5b49.jpg: 11904x5952, ratio 2:1, equirectangular_candidate
+
+## Réponses techniques
+1. Panoramas 360 exploitables: Oui, 6 image(s) 2:1 haute résolution détectée(s).
+2. Images de profondeur: Aucune image de profondeur explicite détectée.
+3. Coordonnées/poses de scan: Des flottants récurrents existent dans les métadonnées, mais aucune association image ↔ pose fiable n’a été reconstruite.
+4. Plan top-down/floorplan: Oui, au moins une image porte un nom de type plan/floor/map.
+5. Mesh caché: Aucun OBJ/GLB/GLTF/mesh standard détecté.
+6. Visite locale sans Matterport: Oui, une visite locale partielle peut être créée avec les vues 360/cube faces disponibles.
+7. Meilleur MVP: Viewer local avec navigation entre panoramas/cube faces, liste latérale, plein écran et rapport d’audit.
+
+## Panoramas / vues candidates
+- pano-407257f1-f66e-489f-9dda-d9f3e1331b2c: equirectangular_candidate, 11904x5952, /uploads/matterport/55-petit-mayard-3-1779979970062/extracted/Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/Floors/ScanLocal/2574784d-c8a7-4408-9eed-fe6453c8ad86_c798050d-e10c-43fa-a102-0514aff28f1c.jpg
+- pano-c25c7a41-7ef8-4fea-8c13-1e0483bd7a1b: equirectangular_candidate, 11904x5952, /uploads/matterport/55-petit-mayard-3-1779979970062/extracted/Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/Floors/ScanLocal/3e5ac72a-132b-4b4b-a127-c7b499dcf244_8f89e7c3-18de-45bf-822a-ef7003f7def8.jpg
+- pano-4e893b27-adf7-4c41-a599-11fe55f0b851: equirectangular_candidate, 11904x5952, /uploads/matterport/55-petit-mayard-3-1779979970062/extracted/Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/Floors/ScanLocal/6ad986b9-72e0-46e2-8d00-4ac6d0f20185_08984137-42e5-48d3-be92-e3e66a8d6749.jpg
+- pano-80c6703f-6f29-4048-98b8-fe32fe8dc5fb: equirectangular_candidate, 11904x5952, /uploads/matterport/55-petit-mayard-3-1779979970062/extracted/Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/Floors/ScanLocal/7fb56fe5-2fbe-4b07-b852-64a75abc7485_d0ad30c4-c970-48c1-bbb9-6f8e8b1210e2.jpg
+- pano-3d468146-f7de-492a-a15a-1de94be12d43: equirectangular_candidate, 11904x5952, /uploads/matterport/55-petit-mayard-3-1779979970062/extracted/Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/Floors/ScanLocal/a5462ae2-a96c-46d7-80a9-a14a9742de69_2d6104d6-43a4-471f-b987-8d1328c48375.jpg
+- pano-250e0776-e8ef-40f8-ac3e-7fbece0c90c0: equirectangular_candidate, 11904x5952, /uploads/matterport/55-petit-mayard-3-1779979970062/extracted/Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/Floors/ScanLocal/f5a4d288-b52f-41e8-8bc0-976e988b0666_8e4652de-55bb-430c-9a6e-f1400bed5b49.jpg
+- cube-bd332749-0700-4ae4-b1f1-4ee3d07afb69: cube_face_set_candidate, 256x256, /uploads/matterport/55-petit-mayard-3-1779979970062/extracted/Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/317750fe7f064276a0d3be9f467c76f3_256_000.jpg
+- cube-e73a355f-2975-4136-a130-48fbdf6e4e5d: cube_face_set_candidate, 512x512, /uploads/matterport/55-petit-mayard-3-1779979970062/extracted/Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/317750fe7f064276a0d3be9f467c76f3_512_000.jpg
+- cube-dab8db24-2fce-471a-9b08-c099eedf44c1: cube_face_set_candidate, 256x256, /uploads/matterport/55-petit-mayard-3-1779979970062/extracted/Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/3875faa43d524d689a77debf11f39f58_256_000.jpg
+- cube-6d9a99af-c348-473c-b28d-5c07c37cb399: cube_face_set_candidate, 512x512, /uploads/matterport/55-petit-mayard-3-1779979970062/extracted/Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/3875faa43d524d689a77debf11f39f58_512_000.jpg
+- cube-a8568b4f-f72b-4b4f-8390-bebcffcae7ae: cube_face_set_candidate, 256x256, /uploads/matterport/55-petit-mayard-3-1779979970062/extracted/Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/4921ed0e884940b9970b1ccf9bf63d2c_256_000.jpg
+- cube-b74a7d8e-3fbd-4e26-b840-74ba239b19a9: cube_face_set_candidate, 512x512, /uploads/matterport/55-petit-mayard-3-1779979970062/extracted/Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/4921ed0e884940b9970b1ccf9bf63d2c_512_000.jpg
+- cube-ad75bd48-aa80-4bed-969e-ac42f5d47bbc: cube_face_set_candidate, 256x256, /uploads/matterport/55-petit-mayard-3-1779979970062/extracted/Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/6c3be552b25840dd9d57d045d973ee1d_256_000.jpg
+- cube-22fa12b7-0905-4f60-8779-dd85330cd4d3: cube_face_set_candidate, 512x512, /uploads/matterport/55-petit-mayard-3-1779979970062/extracted/Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/6c3be552b25840dd9d57d045d973ee1d_512_000.jpg
+- cube-69b1b310-c863-4c61-905d-9f4e59cc745b: cube_face_set_candidate, 256x256, /uploads/matterport/55-petit-mayard-3-1779979970062/extracted/Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/7187a7b1752a49cc8ef1d54a81de74e0_256_000.jpg
+- cube-11cabd13-f86d-4159-ae2d-2ada61eb855e: cube_face_set_candidate, 512x512, /uploads/matterport/55-petit-mayard-3-1779979970062/extracted/Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/7187a7b1752a49cc8ef1d54a81de74e0_512_000.jpg
+- cube-d994673c-cd7b-4aca-9017-e3bccdfd9cf3: cube_face_set_candidate, 256x256, /uploads/matterport/55-petit-mayard-3-1779979970062/extracted/Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051c6d545ecb782f2012a3f2c25_256_000.jpg
+- cube-24f0ddc6-7ff6-461c-8fb0-4d5fb42a62e3: cube_face_set_candidate, 512x512, /uploads/matterport/55-petit-mayard-3-1779979970062/extracted/Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051c6d545ecb782f2012a3f2c25_512_000.jpg
+
+## Métadonnées propriétaires auditées
+- Backup/backup_data: 86016 octets, magic 53 51 4c 69 74 65 20 66 6f 72 6d 61 74 20 33 00, format sqlite, entropie 1.259, strings 72
+- Backup/backup_data-shm: 32768 octets, magic 18 e2 2d 00 00 00 00 00 15 00 00 00 01 00 00 10, format unknown, entropie 0.12, strings 2
+- Backup/backup_data-wal: 420272 octets, magic 37 7f 06 82 00 2d e2 18 00 00 10 00 00 00 00 01, format unknown, entropie 0.882, strings 66
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/01000000-0000-0000-0100-000000000000.mmp: 126 octets, magic 0a 10 01 00 00 00 00 00 00 00 01 00 00 00 00 00, format matterport-binary-candidate, entropie 2.396, strings 0
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/01000000-0020-fa01-0000-000000000000.mmp: 629530 octets, magic 0a 10 01 00 00 00 00 20 fa 01 00 00 00 00 00 00, format matterport-binary-candidate, entropie 7.996, strings 80
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/01000000-0237-b590-0000-000000000000.mmp: 211383 octets, magic 0a 10 01 00 00 00 02 37 b5 90 00 00 00 00 00 00, format matterport-binary-candidate, entropie 7.988, strings 80
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/01000000-2676-b268-0000-000000000000.mmp: 46214 octets, magic 0a 10 01 00 00 00 26 76 b2 68 00 00 00 00 00 00, format matterport-binary-candidate, entropie 7.971, strings 80
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/01000000-6c3c-9e0e-0000-000000000000.mmp: 90497 octets, magic 0a 10 01 00 00 00 6c 3c 9e 0e 00 00 00 00 00 00, format matterport-binary-candidate, entropie 7.984, strings 80
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/01000000-b34a-f183-0000-000000000000.mmp: 1077 octets, magic 0a 10 01 00 00 00 b3 4a f1 83 00 00 00 00 00 00, format matterport-binary-candidate, entropie 7.299, strings 13
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/01000000-da91-a234-0000-000000000000.mmp: 27165 octets, magic 0a 10 01 00 00 00 da 91 a2 34 00 00 00 00 00 00, format matterport-binary-candidate, entropie 7.957, strings 80
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/317750fe-7f06-4276-a0d3-be9f467c76f3_location_data.pb: 848 octets, magic 0a 33 09 00 00 00 00 00 5c 97 40 11 00 50 55 c3, format matterport-binary-candidate, entropie 5.983, strings 8
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/317750fe-7f06-4276-a0d3-be9f467c76f3_sweep_cloud.pb: 2638606 octets, magic 08 88 0e 10 00 18 88 0e 3a 3e 0d b5 c8 36 3f 15, format matterport-binary-candidate, entropie 6.393, strings 80
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/317750fe-7f06-4276-a0d3-be9f467c76f3_sweep_features.pb: 791592 octets, magic 0a 10 31 77 50 fe 7f 06 42 76 a0 d3 be 9f 46 7c, format matterport-binary-candidate, entropie 6.707, strings 80
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/317750fe-7f06-4276-a0d3-be9f467c76f3.mmp: 486742 octets, magic 0a 10 31 77 50 fe 7f 06 42 76 a0 d3 be 9f 46 7c, format matterport-binary-candidate, entropie 7.994, strings 80
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/317750fe-7f06-4276-a0d3-be9f467c76f3.swl: 21512251 octets, magic 0a 10 31 77 50 fe 7f 06 42 76 a0 d3 be 9f 46 7c, format matterport-binary-candidate, entropie 7.995, strings 80
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/317750fe7f064276a0d3be9f467c76f3.dam: 209001 octets, magic 0a a1 4b 0a fa 35 0a ac 20 00 c0 9b be 00 00 68, format matterport-binary-candidate, entropie 6.194, strings 19
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/3875faa4-3d52-4d68-9a77-debf11f39f58_sweep_cloud.pb: 2679438 octets, magic 08 88 0e 10 00 18 88 0e 3a 3e 0d 65 3b 3f 3f 15, format matterport-binary-candidate, entropie 6.403, strings 80
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/3875faa4-3d52-4d68-9a77-debf11f39f58_sweep_features.pb: 879504 octets, magic 0a 10 38 75 fa a4 3d 52 4d 68 9a 77 de bf 11 f3, format matterport-binary-candidate, entropie 6.723, strings 80
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/3875faa4-3d52-4d68-9a77-debf11f39f58.mmp: 370731 octets, magic 0a 10 38 75 fa a4 3d 52 4d 68 9a 77 de bf 11 f3, format matterport-binary-candidate, entropie 7.993, strings 80
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/3875faa4-3d52-4d68-9a77-debf11f39f58.swl: 21385566 octets, magic 0a 10 38 75 fa a4 3d 52 4d 68 9a 77 de bf 11 f3, format matterport-binary-candidate, entropie 7.995, strings 80
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/3875faa43d524d689a77debf11f39f58.dam: 213102 octets, magic 0a f9 5c 0a ba 42 0a ec 27 00 40 ea 3e 00 00 52, format matterport-binary-candidate, entropie 6.166, strings 17
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/4921ed0e-8849-40b9-970b-1ccf9bf63d2c_sweep_cloud.pb: 2643214 octets, magic 08 88 0e 10 00 18 88 0e 3a 3e 0d 4c 37 49 3f 15, format matterport-binary-candidate, entropie 6.399, strings 80
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/4921ed0e-8849-40b9-970b-1ccf9bf63d2c_sweep_features.pb: 741864 octets, magic 0a 10 49 21 ed 0e 88 49 40 b9 97 0b 1c cf 9b f6, format matterport-binary-candidate, entropie 6.722, strings 80
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/4921ed0e-8849-40b9-970b-1ccf9bf63d2c.mmp: 505654 octets, magic 0a 10 49 21 ed 0e 88 49 40 b9 97 0b 1c cf 9b f6, format matterport-binary-candidate, entropie 7.997, strings 80
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/4921ed0e-8849-40b9-970b-1ccf9bf63d2c.swl: 21173068 octets, magic 0a 10 49 21 ed 0e 88 49 40 b9 97 0b 1c cf 9b f6, format matterport-binary-candidate, entropie 7.995, strings 80
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/4921ed0e884940b9970b1ccf9bf63d2c.dam: 215503 octets, magic 0a 9a 5e 0a c6 43 0a c0 28 00 40 d3 be 00 80 72, format matterport-binary-candidate, entropie 6.18, strings 14
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/6c3be552-b258-40dd-9d57-d045d973ee1d_sweep_cloud.pb: 2650254 octets, magic 08 88 0e 10 00 18 88 0e 3a 3e 0d 98 6e 32 3f 15, format matterport-binary-candidate, entropie 6.403, strings 80
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/6c3be552-b258-40dd-9d57-d045d973ee1d_sweep_features.pb: 910806 octets, magic 0a 10 6c 3b e5 52 b2 58 40 dd 9d 57 d0 45 d9 73, format matterport-binary-candidate, entropie 6.83, strings 80
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/6c3be552-b258-40dd-9d57-d045d973ee1d.mmp: 282756 octets, magic 0a 10 6c 3b e5 52 b2 58 40 dd 9d 57 d0 45 d9 73, format matterport-binary-candidate, entropie 7.995, strings 80
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/6c3be552-b258-40dd-9d57-d045d973ee1d.swl: 23035436 octets, magic 0a 10 6c 3b e5 52 b2 58 40 dd 9d 57 d0 45 d9 73, format matterport-binary-candidate, entropie 7.994, strings 80
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/6c3be552b25840dd9d57d045d973ee1d.dam: 210409 octets, magic 0a a1 69 0a b6 4a 0a d0 2c 00 20 13 3f 00 80 06, format matterport-binary-candidate, entropie 6.159, strings 10
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/7187a7b1-752a-49cc-8ef1-d54a81de74e0_sweep_cloud.pb: 2672590 octets, magic 08 88 0e 10 00 18 88 0e 3a 3e 0d 65 3b 3f 3f 15, format matterport-binary-candidate, entropie 6.402, strings 80
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/7187a7b1-752a-49cc-8ef1-d54a81de74e0_sweep_features.pb: 879060 octets, magic 0a 10 71 87 a7 b1 75 2a 49 cc 8e f1 d5 4a 81 de, format matterport-binary-candidate, entropie 6.714, strings 80
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/7187a7b1-752a-49cc-8ef1-d54a81de74e0.mmp: 368911 octets, magic 0a 10 71 87 a7 b1 75 2a 49 cc 8e f1 d5 4a 81 de, format matterport-binary-candidate, entropie 7.994, strings 80
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/7187a7b1-752a-49cc-8ef1-d54a81de74e0.swl: 21485719 octets, magic 0a 10 71 87 a7 b1 75 2a 49 cc 8e f1 d5 4a 81 de, format matterport-binary-candidate, entropie 7.995, strings 80
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/7187a7b1752a49cc8ef1d54a81de74e0.dam: 211522 octets, magic 0a 9e 59 0a d2 3f 0a 94 26 00 a0 2d bf 00 40 f0, format matterport-binary-candidate, entropie 6.168, strings 17
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051-c6d5-45ec-b782-f2012a3f2c25_sweep_cloud.pb: 2623182 octets, magic 08 88 0e 10 00 18 88 0e 3a 3e 0d a2 45 56 3f 15, format matterport-binary-candidate, entropie 6.379, strings 80
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051-c6d5-45ec-b782-f2012a3f2c25_sweep_features.pb: 776052 octets, magic 0a 10 f6 11 40 51 c6 d5 45 ec b7 82 f2 01 2a 3f, format matterport-binary-candidate, entropie 6.708, strings 80
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051-c6d5-45ec-b782-f2012a3f2c25.mmp: 415424 octets, magic 0a 10 f6 11 40 51 c6 d5 45 ec b7 82 f2 01 2a 3f, format matterport-binary-candidate, entropie 7.997, strings 80
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051-c6d5-45ec-b782-f2012a3f2c25.swl: 19228665 octets, magic 0a 10 f6 11 40 51 c6 d5 45 ec b7 82 f2 01 2a 3f, format matterport-binary-candidate, entropie 7.993, strings 80
+- Backup/Jobs/b41cab0f-47f3-4177-a19f-69d8e9c33a73/f6114051c6d545ecb782f2012a3f2c25.dam: 213541 octets, magic 0a 84 61 0a a2 45 0a c4 29 00 00 04 3d 00 40 36, format matterport-binary-candidate, entropie 6.167, strings 10
+
+## Limites
+Ce rapport n’appelle aucun service Matterport et ne contourne aucun DRM. Les fichiers .mmp/.swl/.dam/.pb sont traités comme formats propriétaires: seules les signatures, chaînes lisibles, flottants candidats et structures protobuf brutes sont extraits.

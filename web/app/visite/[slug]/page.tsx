@@ -106,6 +106,8 @@ export default async function VisitPage({ params }: Props) {
           propertyName={property.name}
           matterportEmbedUrl={property.matterportEmbedUrl}
           matterportImportMode={property.matterportImportMode}
+          matterportLocalManifestUrl={property.matterportLocalManifestUrl}
+          matterportAuditReportUrl={property.matterportAuditReportUrl}
           {...toPublicHybridData(property)}
         />
 

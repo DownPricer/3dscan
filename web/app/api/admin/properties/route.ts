@@ -32,6 +32,9 @@ function normalizePropertyPayload(input: unknown) {
         ? { matterportImportStatus: parsed.matterportImportStatus }
         : {}),
       matterportImportError: normalizeOptionalString(parsed.matterportImportError),
+      matterportLocalManifestUrl: normalizeOptionalString(parsed.matterportLocalManifestUrl),
+      matterportAuditReportUrl: normalizeOptionalString(parsed.matterportAuditReportUrl),
+      matterportAuditSummary: parsed.matterportAuditSummary ?? undefined,
       status: parsed.status,
       catalogEnabled: parsed.catalogEnabled ?? false,
       catalogStatus: parsed.catalogStatus,

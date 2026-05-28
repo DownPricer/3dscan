@@ -34,12 +34,14 @@ enum MatterportImportMode {
   EMBED
   MATTERPAK_OBJ
   MATTERPAK_UNKNOWN
+  LOCAL_BACKUP_VIEWER
 }
 
 enum MatterportImportStatus {
   NONE
   PENDING
   READY
+  READY_PARTIAL
   UNSUPPORTED
   ERROR
 }
@@ -99,6 +101,9 @@ model Property {
   matterportZipOriginalName String?
   matterportImportStatus   MatterportImportStatus @default(NONE)
   matterportImportError    String?
+  matterportLocalManifestUrl String?
+  matterportAuditReportUrl   String?
+  matterportAuditSummary     Json?
   status         PropertyStatus  @default(DRAFT)
   catalogEnabled      Boolean        @default(false)
   catalogStatus       CatalogStatus  @default(DRAFT)

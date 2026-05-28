@@ -4,6 +4,7 @@ import { MatterportImportMode } from "@prisma/client";
 import { Expand } from "lucide-react";
 import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { MatterportLocalViewer } from "@/components/viewer/matterport-local-viewer";
 import { ModelViewer } from "@/components/viewer/model-viewer";
 
 type ModelType = "GLB" | "GLTF" | "OBJ" | "ZIP";
@@ -14,6 +15,8 @@ export type MatterportViewerProps = {
   modelType: ModelType;
   matterportEmbedUrl?: string | null;
   matterportImportMode?: MatterportImportMode | null;
+  matterportLocalManifestUrl?: string | null;
+  matterportAuditReportUrl?: string | null;
 };
 
 export function MatterportViewer({
@@ -22,6 +25,8 @@ export function MatterportViewer({
   modelType,
   matterportEmbedUrl,
   matterportImportMode,
+  matterportLocalManifestUrl,
+  matterportAuditReportUrl,
 }: MatterportViewerProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [loaded, setLoaded] = useState(false);
@@ -36,6 +41,16 @@ export function MatterportViewer({
 
   if (matterportImportMode === MatterportImportMode.MATTERPAK_OBJ) {
     return <ModelViewer modelUrl={modelUrl} modelType={modelType} propertyName={propertyName} />;
+  }
+
+  if (matterportImportMode === MatterportImportMode.LOCAL_BACKUP_VIEWER) {
+    return (
+      <MatterportLocalViewer
+        manifestUrl={matterportLocalManifestUrl ?? modelUrl}
+        propertyName={propertyName}
+        auditReportUrl={matterportAuditReportUrl}
+      />
+    );
   }
 
   const src = matterportEmbedUrl?.trim() || null;

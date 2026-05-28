@@ -7,38 +7,32 @@ import { NextRequest, NextResponse } from "next/server";
 import { promisify } from "node:util";
 import { requireAdminRequest } from "@/lib/auth";
 import { env } from "@/lib/env";
+import {
+  auditExtractedMatterportBackup,
+  renderMatterportAuditMarkdown,
+} from "@/lib/matterport-backup-audit";
 import { prisma } from "@/lib/prisma";
 
 export const runtime = "nodejs";
 
 const inflateRawAsync = promisify(inflateRaw);
 
-const allowedZipExtensions = new Set([
-  ".obj",
-  ".mtl",
-  ".jpg",
-  ".jpeg",
-  ".png",
-  ".glb",
-  ".gltf",
-  ".bin",
-  ".json",
-  ".e57",
-  ".xyz",
-  ".pdf",
-]);
-
 function toPosixPath(p: string) {
   return p.replace(/\\/g, "/");
 }
 
 function isUnsafeZipPath(entryPath: string) {
-  const normalized = path.posix.normalize(toPosixPath(entryPath));
+  const normalized = path.posix.normalize(toPosixPath(entryPath).replace(/^\/+/, ""));
   if (!normalized || normalized === "." || normalized.startsWith("/")) return true;
   if (normalized.includes("..")) return true;
   // Windows drive letters in zip entries (rare but possible)
   if (/^[a-zA-Z]:/.test(normalized)) return true;
   return false;
+}
+
+function safeZipRelPath(entryPath: string) {
+  if (isUnsafeZipPath(entryPath)) return null;
+  return path.posix.normalize(toPosixPath(entryPath).replace(/^\/+/, ""));
 }
 
 function extensionOf(filename: string) {
@@ -162,11 +156,8 @@ async function extractEntryToDisk(args: {
   let totalBytes = args.currentTotalBytes;
 
   const rawPath = entry.filename;
-  if (isUnsafeZipPath(rawPath)) return { rel: null, totalBytes };
-  const normalized = path.posix.normalize(toPosixPath(rawPath));
-  const ext = extensionOf(normalized);
-  if (!allowedZipExtensions.has(ext)) return { rel: null, totalBytes };
-
+  const normalized = safeZipRelPath(rawPath);
+  if (!normalized) return { rel: null, totalBytes };
   totalBytes += entry.uncompressedSize;
   if (totalBytes > maxTotalBytes) {
     throw new Error(`Extraction interrompue : le contenu dépasse la limite de ${env.uploadMaxSizeMb} Mo.`);
@@ -262,6 +253,9 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       matterportZipOriginalName: file.name,
       matterportImportMode: MatterportImportMode.MATTERPAK_UNKNOWN,
       matterportImportError: null,
+      matterportLocalManifestUrl: null,
+      matterportAuditReportUrl: null,
+      matterportAuditSummary: undefined,
     },
   });
 
@@ -297,6 +291,33 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     });
     return NextResponse.json({ ok: false, error: message }, { status: 400 });
   }
+
+  const publicBaseUrl = `/uploads/matterport/${id}/${bundleId}`;
+  const audit = await auditExtractedMatterportBackup({
+    rootDir: outputDir,
+    relPaths: extractedRelPaths,
+    sourceName: file.name,
+    publicBaseUrl,
+  });
+  const manifestRel = "matterport_local_manifest.json";
+  const inventoryRel = "matterport_backup_inventory.json";
+  const reportRel = "MATTERPORT_BACKUP_DEEP_AUDIT.md";
+  const publicManifestUrl = `${publicBaseUrl}/${manifestRel}`;
+  const publicReportUrl = `${publicBaseUrl}/${reportRel}`;
+
+  await writeFile(path.join(outputDir, manifestRel), JSON.stringify(audit.manifest, null, 2), "utf8");
+  await writeFile(path.join(outputDir, inventoryRel), JSON.stringify(audit, null, 2), "utf8");
+  await writeFile(path.join(outputDir, reportRel), renderMatterportAuditMarkdown(audit), "utf8");
+  const auditData = {
+    matterportLocalManifestUrl: publicManifestUrl,
+    matterportAuditReportUrl: publicReportUrl,
+    matterportAuditSummary: audit.manifest.summary,
+  };
+  const auditResponse = {
+    localManifestUrl: publicManifestUrl,
+    auditReportUrl: publicReportUrl,
+    auditSummary: audit.manifest.summary,
+  };
 
   const byExt = (ext: string) =>
     extractedRelPaths.filter((p) => extensionOf(p) === ext).map((p) => p);
@@ -344,6 +365,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
           matterportImportMode: MatterportImportMode.MATTERPAK_OBJ,
           matterportImportStatus: MatterportImportStatus.UNSUPPORTED,
           matterportImportError: message,
+          ...auditData,
         },
       });
       return NextResponse.json({
@@ -351,6 +373,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
         importMode: MatterportImportMode.MATTERPAK_OBJ,
         importStatus: MatterportImportStatus.UNSUPPORTED,
         importError: message,
+        ...auditResponse,
       });
     }
 
@@ -383,6 +406,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
             matterportImportError: `${message} (${missing.slice(0, 8).join(", ")}${
               missing.length > 8 ? ", ..." : ""
             })`,
+            ...auditData,
           },
         });
         return NextResponse.json({ ok: false, error: message }, { status: 400 });
@@ -399,6 +423,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
         matterportImportMode: MatterportImportMode.MATTERPAK_OBJ,
         matterportImportStatus: MatterportImportStatus.READY,
         matterportImportError: null,
+        ...auditData,
       },
     });
 
@@ -409,6 +434,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       importMode: MatterportImportMode.MATTERPAK_OBJ,
       importStatus: MatterportImportStatus.READY,
       importError: null,
+      ...auditResponse,
     });
   }
 
@@ -425,6 +451,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
         matterportImportMode: MatterportImportMode.MATTERPAK_UNKNOWN,
         matterportImportStatus: MatterportImportStatus.READY,
         matterportImportError: null,
+        ...auditData,
       },
     });
     return NextResponse.json({
@@ -434,6 +461,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       importMode: MatterportImportMode.MATTERPAK_UNKNOWN,
       importStatus: MatterportImportStatus.READY,
       importError: null,
+      ...auditResponse,
     });
   }
 
@@ -449,6 +477,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
         matterportImportMode: MatterportImportMode.MATTERPAK_UNKNOWN,
         matterportImportStatus: MatterportImportStatus.READY,
         matterportImportError: null,
+        ...auditData,
       },
     });
     return NextResponse.json({
@@ -458,13 +487,41 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       importMode: MatterportImportMode.MATTERPAK_UNKNOWN,
       importStatus: MatterportImportStatus.READY,
       importError: null,
+      ...auditResponse,
     });
   }
 
-  // 3) Point cloud only
+  // 3) Backup Matterport interne: rendu local 360/cube faces si possible.
+  if (audit.manifest.panoramas.length > 0) {
+    const message =
+      "Import local partiel créé : vues 360 extraites. Le dollhouse Matterport complet n’est pas encore reconstruit.";
+    await prisma.property.update({
+      where: { id },
+      data: {
+        visitType: VisitType.MATTERPORT,
+        modelUrl: publicManifestUrl,
+        modelType: ModelType.ZIP,
+        matterportImportMode: MatterportImportMode.LOCAL_BACKUP_VIEWER,
+        matterportImportStatus: MatterportImportStatus.READY_PARTIAL,
+        matterportImportError: message,
+        ...auditData,
+      },
+    });
+    return NextResponse.json({
+      ok: true,
+      modelUrl: publicManifestUrl,
+      modelType: "ZIP",
+      importMode: MatterportImportMode.LOCAL_BACKUP_VIEWER,
+      importStatus: MatterportImportStatus.READY_PARTIAL,
+      importError: message,
+      ...auditResponse,
+    });
+  }
+
+  // 4) Point cloud only
   if (e57Files.length > 0 || xyzFiles.length > 0) {
     const message =
-      "Ce ZIP Matterport contient un format non directement affichable. Utilisez un lien Matterport ou un export OBJ/GLB.";
+      "Ce ZIP Matterport contient un nuage de points mais aucune vue 360 exploitable automatiquement. Le rapport d’audit est disponible.";
     await prisma.property.update({
       where: { id },
       data: {
@@ -472,6 +529,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
         matterportImportMode: MatterportImportMode.MATTERPAK_UNKNOWN,
         matterportImportStatus: MatterportImportStatus.UNSUPPORTED,
         matterportImportError: message,
+        ...auditData,
       },
     });
     return NextResponse.json({
@@ -479,12 +537,13 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       importMode: MatterportImportMode.MATTERPAK_UNKNOWN,
       importStatus: MatterportImportStatus.UNSUPPORTED,
       importError: message,
+      ...auditResponse,
     });
   }
 
-  // 4) Unsupported
+  // 5) Unsupported
   const message =
-    "Ce ZIP Matterport contient un format non directement affichable. Utilisez un lien Matterport ou un export OBJ/GLB.";
+    "Backup restaurable par Matterport, mais pas encore convertible localement. Le rapport d’audit détaille les fichiers trouvés.";
   await prisma.property.update({
     where: { id },
     data: {
@@ -492,6 +551,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       matterportImportMode: MatterportImportMode.MATTERPAK_UNKNOWN,
       matterportImportStatus: MatterportImportStatus.UNSUPPORTED,
       matterportImportError: message,
+      ...auditData,
     },
   });
   return NextResponse.json({
@@ -499,6 +559,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     importMode: MatterportImportMode.MATTERPAK_UNKNOWN,
     importStatus: MatterportImportStatus.UNSUPPORTED,
     importError: message,
+    ...auditResponse,
   });
 }
 

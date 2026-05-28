@@ -18,6 +18,8 @@ type VisitViewerProps = {
   hotspots: HotspotPublic[];
   matterportEmbedUrl?: string | null;
   matterportImportMode?: MatterportImportMode | null;
+  matterportLocalManifestUrl?: string | null;
+  matterportAuditReportUrl?: string | null;
 };
 
 export function VisitViewer({
@@ -29,6 +31,8 @@ export function VisitViewer({
   hotspots,
   matterportEmbedUrl,
   matterportImportMode,
+  matterportLocalManifestUrl,
+  matterportAuditReportUrl,
 }: VisitViewerProps) {
   if (visitType === VisitType.HYBRID_3D_360) {
     return (
@@ -54,6 +58,8 @@ export function VisitViewer({
         modelType={modelType}
         matterportEmbedUrl={matterportEmbedUrl}
         matterportImportMode={matterportImportMode ?? MatterportImportMode.EMBED}
+        matterportLocalManifestUrl={matterportLocalManifestUrl}
+        matterportAuditReportUrl={matterportAuditReportUrl}
       />
     );
   }

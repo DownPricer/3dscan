@@ -98,6 +98,15 @@ export async function PATCH(request: NextRequest, { params }: Params) {
           ...("matterportImportError" in parsed
             ? { matterportImportError: normalizeOptionalString(parsed.matterportImportError) }
             : {}),
+          ...("matterportLocalManifestUrl" in parsed
+            ? { matterportLocalManifestUrl: normalizeOptionalString(parsed.matterportLocalManifestUrl) }
+            : {}),
+          ...("matterportAuditReportUrl" in parsed
+            ? { matterportAuditReportUrl: normalizeOptionalString(parsed.matterportAuditReportUrl) }
+            : {}),
+          ...("matterportAuditSummary" in parsed
+            ? { matterportAuditSummary: parsed.matterportAuditSummary ?? undefined }
+            : {}),
           ...("status" in parsed ? { status: parsed.status } : {}),
           ...("catalogEnabled" in parsed ? { catalogEnabled: parsed.catalogEnabled } : {}),
           ...("catalogStatus" in parsed ? { catalogStatus: parsed.catalogStatus } : {}),

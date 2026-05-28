@@ -82,6 +82,9 @@ export const propertySchema = z.object({
     .or(z.literal(""))
     .transform((value) => (value === "" ? undefined : value)),
   matterportImportError: z.string().trim().optional().or(z.literal("")),
+  matterportLocalManifestUrl: z.string().trim().optional().or(z.literal("")),
+  matterportAuditReportUrl: z.string().trim().optional().or(z.literal("")),
+  matterportAuditSummary: z.unknown().optional().nullable(),
   status: z.nativeEnum(PropertyStatus),
   catalogEnabled: z.boolean().optional().default(false),
   catalogStatus: z.nativeEnum(CatalogStatus).optional().default(CatalogStatus.DRAFT),
