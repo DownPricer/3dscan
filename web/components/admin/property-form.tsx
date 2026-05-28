@@ -1,6 +1,13 @@
 "use client";
 
-import { CatalogStatus, ExternalListingSource, ExternalListingStatus, VisitType } from "@prisma/client";
+import {
+  CatalogStatus,
+  ExternalListingSource,
+  ExternalListingStatus,
+  MatterportImportMode,
+  MatterportImportStatus,
+  VisitType,
+} from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { FormEvent, useCallback, useRef, useState } from "react";
 import {
@@ -15,6 +22,7 @@ import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { formatAdminError } from "@/lib/admin-error-messages";
 import type { HotspotInput, PanoramaSceneInput } from "@/lib/hybrid-types";
+import { parseMatterportInput } from "@/lib/matterport";
 
 type PropertyFormValue = {
   id?: string;
@@ -45,6 +53,13 @@ type PropertyFormValue = {
   modelUrl: string;
   modelType: "GLB" | "GLTF" | "OBJ" | "ZIP";
   visitType?: VisitType;
+  matterportUrl?: string | null;
+  matterportEmbedUrl?: string | null;
+  matterportModelId?: string | null;
+  matterportImportMode?: MatterportImportMode | null;
+  matterportZipOriginalName?: string | null;
+  matterportImportStatus?: MatterportImportStatus | null;
+  matterportImportError?: string | null;
   status: "DRAFT" | "PUBLISHED";
   slug?: string;
   panoramaScenes?: { id: string; name: string; imageUrl: string; sortOrder: number }[];
@@ -80,6 +95,30 @@ export function PropertyForm({ property }: { property?: PropertyFormValue }) {
   const [visitType, setVisitType] = useState<VisitType>(
     property?.visitType ?? VisitType.MODEL_3D,
   );
+  const [matterportRaw, setMatterportRaw] = useState<string>(
+    property?.matterportEmbedUrl ?? property?.matterportUrl ?? "",
+  );
+  const [matterportUrl, setMatterportUrl] = useState<string | null>(
+    property?.matterportUrl ?? null,
+  );
+  const [matterportEmbedUrl, setMatterportEmbedUrl] = useState<string | null>(
+    property?.matterportEmbedUrl ?? null,
+  );
+  const [matterportModelId, setMatterportModelId] = useState<string | null>(
+    property?.matterportModelId ?? null,
+  );
+  const [matterportImportStatus, setMatterportImportStatus] = useState<MatterportImportStatus>(
+    property?.matterportImportStatus ?? MatterportImportStatus.NONE,
+  );
+  const [matterportImportMode, setMatterportImportMode] = useState<MatterportImportMode>(
+    property?.matterportImportMode ?? MatterportImportMode.EMBED,
+  );
+  const [matterportZipOriginalName, setMatterportZipOriginalName] = useState<string | null>(
+    property?.matterportZipOriginalName ?? null,
+  );
+  const [matterportImportError, setMatterportImportError] = useState<string | null>(
+    property?.matterportImportError ?? null,
+  );
   const [panoramaScenes, setPanoramaScenes] = useState<PanoramaSceneInput[]>(
     property?.panoramaScenes?.map((s) => ({
       id: s.id,
@@ -113,6 +152,13 @@ export function PropertyForm({ property }: { property?: PropertyFormValue }) {
     const form = formRef.current;
     if (!form) return null;
     const formData = new FormData(form);
+    const effectiveModelUrl =
+      visitType === VisitType.MATTERPORT
+        ? (matterportEmbedUrl ?? matterportUrl ?? uploadState.modelUrl)
+        : uploadState.modelUrl;
+    const effectiveModelType =
+      visitType === VisitType.MATTERPORT ? "ZIP" : uploadState.modelType;
+
     return {
       name: formData.get("name"),
       address: formData.get("address"),
@@ -134,10 +180,17 @@ export function PropertyForm({ property }: { property?: PropertyFormValue }) {
       catalogCoverImageUrl: catalogCoverImageUrl ?? "",
       externalListingUrl: formData.get("externalListingUrl"),
       externalListingSource: formData.get("externalListingSource") ?? "",
-      modelUrl: uploadState.modelUrl,
-      modelType: uploadState.modelType,
+      modelUrl: effectiveModelUrl,
+      modelType: effectiveModelType,
       visitType,
       status: statusOverride ?? formData.get("status"),
+      matterportUrl: matterportUrl ?? "",
+      matterportEmbedUrl: matterportEmbedUrl ?? "",
+      matterportModelId: matterportModelId ?? "",
+      matterportImportMode,
+      matterportZipOriginalName: matterportZipOriginalName ?? "",
+      matterportImportStatus,
+      matterportImportError: matterportImportError ?? "",
       panoramaScenes,
       hotspots,
     };
@@ -150,7 +203,14 @@ export function PropertyForm({ property }: { property?: PropertyFormValue }) {
       setSaveStatus("error");
       return false;
     }
-    if (!uploadState.modelUrl) {
+    if (visitType === VisitType.MATTERPORT) {
+      const embed = (matterportEmbedUrl ?? matterportUrl ?? "").trim();
+      if (!embed) {
+        setError("Ajoutez un lien Matterport ou un code iframe avant d'enregistrer.");
+        setSaveStatus("error");
+        return false;
+      }
+    } else if (!uploadState.modelUrl) {
       setError("Ajoutez d'abord votre modèle 3D (.glb recommandé).");
       setSaveStatus("error");
       return false;
@@ -253,6 +313,86 @@ export function PropertyForm({ property }: { property?: PropertyFormValue }) {
     }
 
     return data.url;
+  }
+
+  async function uploadMatterportZip(file: File) {
+    const id = propertyId ?? property?.id;
+    if (!id) {
+      setError("Enregistrez d'abord la propriété pour activer l'import ZIP Matterport.");
+      return;
+    }
+
+    setError(null);
+    setMatterportImportError(null);
+    setMatterportZipOriginalName(file.name);
+    setMatterportImportStatus(MatterportImportStatus.PENDING);
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const response = await fetch(`/api/admin/properties/${id}/matterport-zip`, {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = (await response.json()) as
+      | {
+          ok: true;
+          modelUrl?: string;
+          modelType?: "GLB" | "GLTF" | "OBJ" | "ZIP";
+          importMode?: MatterportImportMode;
+          importStatus?: MatterportImportStatus;
+          importError?: string | null;
+        }
+      | { ok: false; error: string };
+
+    if (!response.ok || !("ok" in data) || data.ok === false) {
+      setMatterportImportStatus(MatterportImportStatus.ERROR);
+      setMatterportImportError(
+        "ok" in data && data.ok === false ? data.error : "Import ZIP Matterport impossible.",
+      );
+      setError(
+        "ok" in data && data.ok === false ? data.error : "Import ZIP Matterport impossible.",
+      );
+      return;
+    }
+
+    setMatterportImportMode(data.importMode ?? MatterportImportMode.MATTERPAK_UNKNOWN);
+    setMatterportImportStatus(data.importStatus ?? MatterportImportStatus.READY);
+    setMatterportImportError(data.importError ?? null);
+
+    if (data.modelUrl && data.modelType) {
+      setUploadState((current) => ({
+        ...current,
+        modelUrl: data.modelUrl!,
+        modelType: data.modelType!,
+      }));
+    }
+  }
+
+  function handleMatterportRaw(value: string) {
+    setMatterportRaw(value);
+    setMatterportImportMode(MatterportImportMode.EMBED);
+    setMatterportImportStatus(MatterportImportStatus.READY);
+    setMatterportImportError(null);
+
+    if (!value.trim()) {
+      setMatterportUrl(null);
+      setMatterportEmbedUrl(null);
+      setMatterportModelId(null);
+      return;
+    }
+
+    const parsed = parseMatterportInput(value);
+    if (!parsed.ok) {
+      setMatterportImportStatus(MatterportImportStatus.ERROR);
+      setMatterportImportError(parsed.error);
+      return;
+    }
+
+    setMatterportUrl(parsed.matterportUrl);
+    setMatterportEmbedUrl(parsed.matterportEmbedUrl);
+    setMatterportModelId(parsed.matterportModelId);
   }
 
   async function uploadCatalogCover(file: File) {
@@ -628,8 +768,12 @@ export function PropertyForm({ property }: { property?: PropertyFormValue }) {
           <HybridTourWizard
             visitType={visitType}
             onVisitTypeChange={setVisitType}
-            modelUrl={uploadState.modelUrl}
-            modelType={uploadState.modelType}
+            modelUrl={
+              visitType === VisitType.MATTERPORT
+                ? (matterportEmbedUrl ?? matterportUrl ?? "")
+                : uploadState.modelUrl
+            }
+            modelType={visitType === VisitType.MATTERPORT ? "ZIP" : uploadState.modelType}
             onUploadModel={(files) => void upload(files, "model")}
             uploadingModel={uploading === "model"}
             panoramaScenes={panoramaScenes}
@@ -645,6 +789,88 @@ export function PropertyForm({ property }: { property?: PropertyFormValue }) {
             uploadError={error}
           />
         </Card>
+
+        {visitType === VisitType.MATTERPORT ? (
+          <Card className="space-y-5 bg-white">
+            <div>
+              <h2 className="text-xl font-black text-[#0f2f3f]">Visite Matterport</h2>
+              <p className="mt-1 text-sm text-[#667085]">
+                Option recommandée : collez un lien Matterport ou un code iframe. Option avancée :
+                importez un ZIP Matterport (MatterPak OBJ) si disponible.
+              </p>
+            </div>
+
+            <div className="grid gap-5">
+              <div className="space-y-2">
+                <Label htmlFor="matterportRaw">Lien Matterport ou code iframe</Label>
+                <Textarea
+                  id="matterportRaw"
+                  value={matterportRaw}
+                  onChange={(e) => handleMatterportRaw(e.target.value)}
+                  placeholder="Collez une URL https://my.matterport.com/show/?m=... ou un <iframe ...>…"
+                />
+                {matterportImportError ? (
+                  <p className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">
+                    {matterportImportError}
+                  </p>
+                ) : null}
+              </div>
+
+              {matterportEmbedUrl ? (
+                <div className="space-y-2">
+                  <p className="text-sm font-semibold text-[#0f2f3f]">Prévisualisation</p>
+                  <div className="overflow-hidden rounded-2xl border border-[#e4e7ec] bg-black">
+                    <iframe
+                      title="Prévisualisation Matterport"
+                      src={matterportEmbedUrl}
+                      className="h-[420px] w-full"
+                      allow="fullscreen; xr-spatial-tracking"
+                      allowFullScreen
+                      referrerPolicy="no-referrer"
+                    />
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      onClick={() => {
+                        if (matterportEmbedUrl) window.open(matterportEmbedUrl, "_blank");
+                      }}
+                    >
+                      Tester l’intégration
+                    </Button>
+                  </div>
+                </div>
+              ) : null}
+
+              <div className="space-y-2">
+                <Label htmlFor="matterportZip">Importer un ZIP Matterport / MatterPak</Label>
+                <Input
+                  id="matterportZip"
+                  type="file"
+                  accept=".zip"
+                  disabled={!(propertyId ?? property?.id)}
+                  onChange={(event) => {
+                    const file = event.target.files?.[0];
+                    if (file) void uploadMatterportZip(file);
+                    event.target.value = "";
+                  }}
+                />
+                <p className="text-xs text-[#667085]">
+                  Extraction serveur vers <code>/uploads/matterport/&lt;id&gt;/</code>. Seuls certains
+                  formats sont autorisés. Si le ZIP ne contient pas d’OBJ/GLB, il sera marqué comme
+                  non supporté.
+                </p>
+                {matterportImportStatus !== MatterportImportStatus.NONE ? (
+                  <p className="text-xs font-semibold text-[#475467]">
+                    Statut import : {matterportImportStatus}
+                    {matterportZipOriginalName ? ` — ${matterportZipOriginalName}` : ""}
+                  </p>
+                ) : null}
+              </div>
+            </div>
+          </Card>
+        ) : null}
       </div>
 
       <Card className="h-fit space-y-5 bg-white lg:sticky lg:top-6">
@@ -713,7 +939,12 @@ export function PropertyForm({ property }: { property?: PropertyFormValue }) {
           type="button"
           variant="secondary"
           className="w-full"
-          disabled={loading || !uploadState.modelUrl}
+          disabled={
+            loading ||
+            (visitType === VisitType.MATTERPORT
+              ? !(matterportEmbedUrl ?? matterportUrl ?? "").trim()
+              : !uploadState.modelUrl)
+          }
           onClick={() => void saveDraft()}
         >
           Enregistrer le brouillon
@@ -724,7 +955,12 @@ export function PropertyForm({ property }: { property?: PropertyFormValue }) {
           name="intent"
           value="publish"
           className="w-full"
-          disabled={loading || !uploadState.modelUrl}
+          disabled={
+            loading ||
+            (visitType === VisitType.MATTERPORT
+              ? !(matterportEmbedUrl ?? matterportUrl ?? "").trim()
+              : !uploadState.modelUrl)
+          }
         >
           {loading ? "Publication…" : "Publier la visite"}
         </Button>
@@ -735,7 +971,12 @@ export function PropertyForm({ property }: { property?: PropertyFormValue }) {
           value="draft"
           variant="secondary"
           className="w-full"
-          disabled={loading || !uploadState.modelUrl}
+          disabled={
+            loading ||
+            (visitType === VisitType.MATTERPORT
+              ? !(matterportEmbedUrl ?? matterportUrl ?? "").trim()
+              : !uploadState.modelUrl)
+          }
         >
           {loading ? "Enregistrement..." : property ? "Modifier (brouillon)" : "Créer"}
         </Button>

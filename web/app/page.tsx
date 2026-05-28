@@ -14,6 +14,7 @@ export const revalidate = 0;
 function visitTypeLabel(type: VisitType) {
   if (type === VisitType.MODEL_3D) return "3D";
   if (type === VisitType.PANORAMA_360) return "360";
+  if (type === VisitType.MATTERPORT) return "Matterport";
   return "Hybride";
 }
 

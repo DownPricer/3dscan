@@ -74,6 +74,30 @@ export async function PATCH(request: NextRequest, { params }: Params) {
           ...("modelUrl" in parsed ? { modelUrl: parsed.modelUrl } : {}),
           ...("modelType" in parsed ? { modelType: parsed.modelType } : {}),
           ...("visitType" in parsed ? { visitType: parsed.visitType } : {}),
+          ...("matterportUrl" in parsed
+            ? { matterportUrl: normalizeOptionalString(parsed.matterportUrl) }
+            : {}),
+          ...("matterportEmbedUrl" in parsed
+            ? { matterportEmbedUrl: normalizeOptionalString(parsed.matterportEmbedUrl) }
+            : {}),
+          ...("matterportModelId" in parsed
+            ? { matterportModelId: normalizeOptionalString(parsed.matterportModelId) }
+            : {}),
+          ...("matterportImportMode" in parsed
+            ? {
+                matterportImportMode:
+                  parsed.matterportImportMode === "" ? null : parsed.matterportImportMode,
+              }
+            : {}),
+          ...("matterportZipOriginalName" in parsed
+            ? { matterportZipOriginalName: normalizeOptionalString(parsed.matterportZipOriginalName) }
+            : {}),
+          ...("matterportImportStatus" in parsed
+            ? { matterportImportStatus: parsed.matterportImportStatus }
+            : {}),
+          ...("matterportImportError" in parsed
+            ? { matterportImportError: normalizeOptionalString(parsed.matterportImportError) }
+            : {}),
           ...("status" in parsed ? { status: parsed.status } : {}),
           ...("catalogEnabled" in parsed ? { catalogEnabled: parsed.catalogEnabled } : {}),
           ...("catalogStatus" in parsed ? { catalogStatus: parsed.catalogStatus } : {}),

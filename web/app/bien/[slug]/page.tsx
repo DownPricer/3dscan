@@ -22,6 +22,7 @@ export const revalidate = 0;
 function visitTypeLabel(type: VisitType) {
   if (type === VisitType.MODEL_3D) return "3D";
   if (type === VisitType.PANORAMA_360) return "360";
+  if (type === VisitType.MATTERPORT) return "Matterport";
   return "Hybride";
 }
 
@@ -135,6 +136,11 @@ export default async function BienDetailPage({ params }: Props) {
                 <Badge>Visite virtuelle</Badge>
                 <Badge variant="published">{visitTypeLabel(property.visitType)}</Badge>
               </div>
+              {property.visitType === VisitType.MATTERPORT ? (
+                <p className="mt-3 text-sm font-semibold text-[#2f6f5e]">
+                  Visite Matterport immersive
+                </p>
+              ) : null}
               <h1 className="mt-4 text-4xl font-black tracking-tight text-[#0f2f3f]">
                 {title}
               </h1>

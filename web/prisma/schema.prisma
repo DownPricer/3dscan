@@ -27,6 +27,21 @@ enum VisitType {
   MODEL_3D
   PANORAMA_360
   HYBRID_3D_360
+  MATTERPORT
+}
+
+enum MatterportImportMode {
+  EMBED
+  MATTERPAK_OBJ
+  MATTERPAK_UNKNOWN
+}
+
+enum MatterportImportStatus {
+  NONE
+  PENDING
+  READY
+  UNSUPPORTED
+  ERROR
 }
 
 enum ExternalStatus {
@@ -77,6 +92,13 @@ model Property {
   modelUrl       String
   modelType      ModelType
   visitType      VisitType       @default(MODEL_3D)
+  matterportUrl            String?
+  matterportEmbedUrl       String?
+  matterportModelId        String?
+  matterportImportMode     MatterportImportMode?
+  matterportZipOriginalName String?
+  matterportImportStatus   MatterportImportStatus @default(NONE)
+  matterportImportError    String?
   status         PropertyStatus  @default(DRAFT)
   catalogEnabled      Boolean        @default(false)
   catalogStatus       CatalogStatus  @default(DRAFT)

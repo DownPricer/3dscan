@@ -46,6 +46,8 @@ function stepsForVisitType(visitType: VisitType): WizardStepId[] {
       return ["type", "model", "rooms", "preview", "publish"];
     case VisitType.HYBRID_3D_360:
       return ["type", "model", "rooms", "pins", "preview", "publish"];
+    case VisitType.MATTERPORT:
+      return ["type", "publish"];
     default:
       return ["type", "model", "publish"];
   }
@@ -245,7 +247,7 @@ export function HybridTourWizard({
             <p className="text-sm text-[#667085]">
               Choisissez le type de visite pour ce bien. Vous pourrez modifier ce choix plus tard.
             </p>
-            <div className="grid gap-3 sm:grid-cols-3">
+            <div className="grid gap-3 sm:grid-cols-4">
               {(
                 [
                   {
@@ -262,6 +264,11 @@ export function HybridTourWizard({
                     value: VisitType.HYBRID_3D_360,
                     title: "Hybride 3D + 360",
                     desc: "Plan 3D + photos 360 par pièce.",
+                  },
+                  {
+                    value: VisitType.MATTERPORT,
+                    title: "Matterport",
+                    desc: "Intégration iframe (recommandée) ou MatterPak OBJ.",
                   },
                 ] as const
               ).map((opt) => (

@@ -3,6 +3,8 @@ import {
   ExternalListingSource,
   ExternalListingStatus,
   ExternalStatus,
+  MatterportImportMode,
+  MatterportImportStatus,
   ModelType,
   PropertyStatus,
   VisitType,
@@ -50,6 +52,28 @@ export const propertySchema = z.object({
   modelUrl: z.string().trim().min(1, "Le modèle 3D est obligatoire."),
   modelType: z.nativeEnum(ModelType),
   visitType: z.nativeEnum(VisitType).default(VisitType.MODEL_3D),
+  matterportUrl: z
+    .string()
+    .trim()
+    .optional()
+    .or(z.literal(""))
+    .refine((value) => !value || isMatterportUrl(value), {
+      message: "URL Matterport invalide. Utilisez un lien https://*.matterport.com/…",
+    }),
+  matterportEmbedUrl: z
+    .string()
+    .trim()
+    .optional()
+    .or(z.literal(""))
+    .refine((value) => !value || isMatterportUrl(value), {
+      message:
+        "URL d'embed Matterport invalide. Utilisez un lien https://*.matterport.com/…",
+    }),
+  matterportModelId: z.string().trim().optional().or(z.literal("")),
+  matterportImportMode: z.nativeEnum(MatterportImportMode).optional(),
+  matterportZipOriginalName: z.string().trim().optional().or(z.literal("")),
+  matterportImportStatus: z.nativeEnum(MatterportImportStatus).optional(),
+  matterportImportError: z.string().trim().optional().or(z.literal("")),
   status: z.nativeEnum(PropertyStatus),
   catalogEnabled: z.boolean().optional().default(false),
   catalogStatus: z.nativeEnum(CatalogStatus).optional().default(CatalogStatus.DRAFT),
@@ -111,6 +135,17 @@ export function isHttpUrl(value: string) {
   try {
     const url = new URL(value);
     return url.protocol === "http:" || url.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
+export function isMatterportUrl(value: string) {
+  try {
+    const url = new URL(value);
+    if (url.protocol !== "http:" && url.protocol !== "https:") return false;
+    const host = url.hostname.toLowerCase();
+    return host === "matterport.com" || host.endsWith(".matterport.com");
   } catch {
     return false;
   }
