@@ -9,7 +9,7 @@ import {
   VisitType,
 } from "@prisma/client";
 import { useRouter } from "next/navigation";
-import { FormEvent, useCallback, useRef, useState } from "react";
+import { ChangeEvent, FormEvent, useCallback, useRef, useState } from "react";
 import {
   HybridTourWizard,
   type SaveStatus,
@@ -82,6 +82,7 @@ type UploadState = {
 export function PropertyForm({ property }: { property?: PropertyFormValue }) {
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
+  const matterportZipInputRef = useRef<HTMLInputElement | null>(null);
   const [propertyId, setPropertyId] = useState(property?.id);
   const [propertyName, setPropertyName] = useState(property?.name ?? "");
   const [uploadState, setUploadState] = useState<UploadState>({
@@ -119,6 +120,8 @@ export function PropertyForm({ property }: { property?: PropertyFormValue }) {
   const [matterportImportError, setMatterportImportError] = useState<string | null>(
     property?.matterportImportError ?? null,
   );
+  const [matterportZipSelected, setMatterportZipSelected] = useState<File | null>(null);
+  const [matterportZipUploading, setMatterportZipUploading] = useState(false);
   const [panoramaScenes, setPanoramaScenes] = useState<PanoramaSceneInput[]>(
     property?.panoramaScenes?.map((s) => ({
       id: s.id,
@@ -315,10 +318,28 @@ export function PropertyForm({ property }: { property?: PropertyFormValue }) {
     return data.url;
   }
 
+  const canImportMatterportZip = Boolean(propertyId ?? property?.id);
+
+  function handleMatterportZipSelected(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0] ?? null;
+    setMatterportZipSelected(file);
+    event.target.value = "";
+  }
+
+  async function submitMatterportZipImport() {
+    if (!matterportZipSelected) return;
+    setMatterportZipUploading(true);
+    try {
+      await uploadMatterportZip(matterportZipSelected);
+    } finally {
+      setMatterportZipUploading(false);
+    }
+  }
+
   async function uploadMatterportZip(file: File) {
     const id = propertyId ?? property?.id;
     if (!id) {
-      setError("Enregistrez d'abord la propriété pour activer l'import ZIP Matterport.");
+      setError("Enregistrez d'abord le bien avant d'importer un ZIP Matterport.");
       return;
     }
 
@@ -843,19 +864,50 @@ export function PropertyForm({ property }: { property?: PropertyFormValue }) {
                 </div>
               ) : null}
 
-              <div className="space-y-2">
-                <Label htmlFor="matterportZip">Importer un ZIP Matterport / MatterPak</Label>
-                <Input
+              <div className="space-y-3">
+                <p className="text-sm font-semibold text-[#0f2f3f]">
+                  Importer un ZIP Matterport / MatterPak
+                </p>
+                {!canImportMatterportZip ? (
+                  <p className="rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-900">
+                    Enregistrez d&apos;abord le bien avant d&apos;importer un ZIP Matterport.
+                  </p>
+                ) : null}
+                <input
+                  ref={matterportZipInputRef}
                   id="matterportZip"
                   type="file"
-                  accept=".zip"
-                  disabled={!(propertyId ?? property?.id)}
-                  onChange={(event) => {
-                    const file = event.target.files?.[0];
-                    if (file) void uploadMatterportZip(file);
-                    event.target.value = "";
-                  }}
+                  accept=".zip,application/zip,application/x-zip-compressed"
+                  className="hidden"
+                  disabled={!canImportMatterportZip}
+                  onChange={handleMatterportZipSelected}
                 />
+                <div className="relative z-10 flex flex-wrap gap-2">
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    disabled={!canImportMatterportZip || matterportZipUploading}
+                    onClick={() => matterportZipInputRef.current?.click()}
+                  >
+                    Choisir un ZIP Matterport
+                  </Button>
+                  <Button
+                    type="button"
+                    disabled={
+                      !canImportMatterportZip ||
+                      !matterportZipSelected ||
+                      matterportZipUploading
+                    }
+                    onClick={() => void submitMatterportZipImport()}
+                  >
+                    {matterportZipUploading ? "Import en cours…" : "Importer le ZIP"}
+                  </Button>
+                </div>
+                {matterportZipSelected ? (
+                  <p className="text-sm font-semibold text-emerald-800">
+                    Fichier sélectionné : {matterportZipSelected.name}
+                  </p>
+                ) : null}
                 <p className="text-xs text-[#667085]">
                   Extraction serveur vers <code>/uploads/matterport/&lt;id&gt;/</code>. Seuls certains
                   formats sont autorisés. Si le ZIP ne contient pas d’OBJ/GLB, il sera marqué comme
