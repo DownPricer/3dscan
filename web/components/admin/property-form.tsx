@@ -184,7 +184,9 @@ export function PropertyForm({ property }: { property?: PropertyFormValue }) {
           : matterportLocalSource
         : uploadState.modelUrl;
     const effectiveModelType =
-      visitType === VisitType.MATTERPORT && isMatterportEmbedMode(matterportImportMode)
+      visitType === VisitType.MATTERPORT &&
+      (isMatterportEmbedMode(matterportImportMode) ||
+        matterportImportMode === MatterportImportMode.LOCAL_BACKUP_VIEWER)
         ? "ZIP"
         : uploadState.modelType;
 
@@ -230,26 +232,47 @@ export function PropertyForm({ property }: { property?: PropertyFormValue }) {
 
   async function persistProperty(statusOverride?: "DRAFT" | "PUBLISHED"): Promise<boolean> {
     const payload = buildPayload(statusOverride);
+    const intendedStatus = (payload?.status as "DRAFT" | "PUBLISHED" | undefined) ?? "DRAFT";
     if (!payload?.name || String(payload.name).trim().length < 2) {
       setError("Indiquez le nom de la propriété avant d'enregistrer.");
       setSaveStatus("error");
       return false;
     }
-    if (visitType === VisitType.MATTERPORT && isMatterportEmbedMode(matterportImportMode)) {
+    if (
+      intendedStatus === "PUBLISHED" &&
+      visitType === VisitType.MATTERPORT &&
+      isMatterportEmbedMode(matterportImportMode)
+    ) {
       const embedSource = (matterportEmbedUrl ?? matterportUrl ?? "").trim();
       if (!embedSource) {
-        setError("Ajoutez un lien Matterport ou choisissez l’import local Matterport.");
+        setError("Ajoutez un lien Matterport avant publication.");
         setSaveStatus("error");
         return false;
       }
-    } else if (visitType === VisitType.MATTERPORT) {
+    } else if (
+      intendedStatus === "PUBLISHED" &&
+      visitType === VisitType.MATTERPORT &&
+      matterportImportMode === MatterportImportMode.LOCAL_BACKUP_VIEWER
+    ) {
       const localSource = (matterportLocalManifestUrl ?? uploadState.modelUrl ?? "").trim();
-      if (!localSource) {
-        setError("Importez un ZIP Matterport pour créer la visite locale.");
+      const importReady =
+        matterportImportStatus === MatterportImportStatus.READY ||
+        matterportImportStatus === MatterportImportStatus.READY_PARTIAL;
+      if (!localSource && !importReady) {
+        setError("Importez le ZIP Matterport avant publication.");
         setSaveStatus("error");
         return false;
       }
-    } else if (!uploadState.modelUrl) {
+    } else if (
+      intendedStatus === "PUBLISHED" &&
+      visitType === VisitType.MATTERPORT &&
+      isMatterportLocalMode(matterportImportMode) &&
+      !uploadState.modelUrl
+    ) {
+      setError("Ajoutez le fichier local Matterport avant publication.");
+      setSaveStatus("error");
+      return false;
+    } else if (intendedStatus === "PUBLISHED" && !uploadState.modelUrl) {
       setError("Ajoutez d'abord votre modèle 3D (.glb recommandé).");
       setSaveStatus("error");
       return false;
@@ -259,6 +282,7 @@ export function PropertyForm({ property }: { property?: PropertyFormValue }) {
     setError(null);
 
     const id = propertyId ?? property?.id;
+    const isNewProperty = !id;
     const response = await fetch(
       id ? `/api/admin/properties/${id}` : "/api/admin/properties",
       {
@@ -283,6 +307,10 @@ export function PropertyForm({ property }: { property?: PropertyFormValue }) {
     if (data.property?.id) setPropertyId(data.property.id);
     if (data.publicUrl) setSuccessUrl(data.publicUrl);
     setSaveStatus("saved");
+    if (isNewProperty && visitType === VisitType.MATTERPORT && data.property?.id) {
+      router.push(`/admin/properties/${data.property.id}/edit`);
+      return true;
+    }
     router.refresh();
     return true;
   }
@@ -567,6 +595,8 @@ export function PropertyForm({ property }: { property?: PropertyFormValue }) {
     const status =
       intent === "publish"
         ? "PUBLISHED"
+        : intent === "draft"
+          ? "DRAFT"
         : ((formData.get("status") as "DRAFT" | "PUBLISHED") ?? "DRAFT");
     const ok = await persistProperty(status);
     setLoading(false);
@@ -575,11 +605,22 @@ export function PropertyForm({ property }: { property?: PropertyFormValue }) {
 
   const matterportLocalSource = matterportLocalManifestUrl ?? uploadState.modelUrl;
   const matterportEmbedSource = matterportEmbedUrl ?? matterportUrl ?? "";
-  const canSaveMatterport =
+  const canSaveDraft =
+    visitType === VisitType.MATTERPORT || Boolean(uploadState.modelUrl.trim());
+  const matterportImportReady =
+    matterportImportStatus === MatterportImportStatus.READY ||
+    matterportImportStatus === MatterportImportStatus.READY_PARTIAL;
+  const canPublishMatterport =
     visitType !== VisitType.MATTERPORT ||
     (isMatterportEmbedMode(matterportImportMode)
       ? Boolean(matterportEmbedSource.trim())
-      : Boolean(matterportLocalSource.trim()));
+      : matterportImportMode === MatterportImportMode.LOCAL_BACKUP_VIEWER
+        ? Boolean(matterportLocalSource.trim()) || matterportImportReady
+        : Boolean(uploadState.modelUrl.trim()));
+  const canPublish =
+    visitType === VisitType.MATTERPORT
+      ? canPublishMatterport
+      : Boolean(uploadState.modelUrl.trim());
   const panoramaCandidateCount =
     (matterportAuditSummary?.panoramaCandidates ?? 0) +
     (matterportAuditSummary?.cubeFaceSetCandidates ?? 0);
@@ -904,9 +945,26 @@ export function PropertyForm({ property }: { property?: PropertyFormValue }) {
                   Aucun lien Matterport nécessaire pour ce mode. Le ZIP est audité localement et le
                   viewer utilise le manifest extrait.
                 </p>
+                {matterportImportMode !== MatterportImportMode.LOCAL_BACKUP_VIEWER ? (
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    onClick={() => {
+                      setMatterportImportMode(MatterportImportMode.LOCAL_BACKUP_VIEWER);
+                      setMatterportImportStatus(MatterportImportStatus.NONE);
+                      setMatterportImportError(null);
+                      setMatterportRaw("");
+                      setMatterportUrl(null);
+                      setMatterportEmbedUrl(null);
+                      setMatterportModelId(null);
+                    }}
+                  >
+                    Choisir l’import local ZIP / backup Matterport
+                  </Button>
+                ) : null}
                 {!canImportMatterportZip ? (
                   <p className="rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-900">
-                    Enregistrez d&apos;abord le bien avant d&apos;importer un ZIP Matterport.
+                    Enregistrez d&apos;abord le brouillon pour importer le ZIP.
                   </p>
                 ) : null}
                 <input
@@ -1133,7 +1191,7 @@ export function PropertyForm({ property }: { property?: PropertyFormValue }) {
           className="w-full"
           disabled={
             loading ||
-            (visitType === VisitType.MATTERPORT ? !canSaveMatterport : !uploadState.modelUrl)
+            (visitType !== VisitType.MATTERPORT && !canPublish)
           }
           onClick={() => void saveDraft()}
         >
@@ -1147,7 +1205,7 @@ export function PropertyForm({ property }: { property?: PropertyFormValue }) {
           className="w-full"
           disabled={
             loading ||
-            (visitType === VisitType.MATTERPORT ? !canSaveMatterport : !uploadState.modelUrl)
+            !canSaveDraft
           }
         >
           {loading ? "Publication…" : "Publier la visite"}
@@ -1161,7 +1219,7 @@ export function PropertyForm({ property }: { property?: PropertyFormValue }) {
           className="w-full"
           disabled={
             loading ||
-            (visitType === VisitType.MATTERPORT ? !canSaveMatterport : !uploadState.modelUrl)
+            !canSaveDraft
           }
         >
           {loading ? "Enregistrement..." : property ? "Modifier (brouillon)" : "Créer"}

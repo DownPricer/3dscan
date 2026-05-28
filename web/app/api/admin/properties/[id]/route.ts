@@ -71,7 +71,7 @@ export async function PATCH(request: NextRequest, { params }: Params) {
           ...("coverImageUrl" in parsed
             ? { coverImageUrl: normalizeOptionalString(parsed.coverImageUrl) }
             : {}),
-          ...("modelUrl" in parsed ? { modelUrl: parsed.modelUrl } : {}),
+          ...("modelUrl" in parsed ? { modelUrl: parsed.modelUrl ?? "" } : {}),
           ...("modelType" in parsed ? { modelType: parsed.modelType } : {}),
           ...("visitType" in parsed ? { visitType: parsed.visitType } : {}),
           ...("matterportUrl" in parsed

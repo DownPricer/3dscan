@@ -49,7 +49,7 @@ const propertyShape = {
   price: z.coerce.number().int().positive().optional().or(z.literal("")),
   description: z.string().trim().optional().or(z.literal("")),
   coverImageUrl: z.string().trim().optional().or(z.literal("")),
-  modelUrl: z.string().trim().min(1, "Le modèle 3D est obligatoire."),
+  modelUrl: z.string().trim().optional().or(z.literal("")),
   modelType: z.nativeEnum(ModelType),
   visitType: z.nativeEnum(VisitType).default(VisitType.MODEL_3D),
   matterportUrl: z
@@ -138,8 +138,10 @@ const propertyShape = {
 };
 
 type MatterportValidationInput = {
+  status?: PropertyStatus;
   visitType?: VisitType;
   matterportImportMode?: MatterportImportMode | "";
+  matterportImportStatus?: MatterportImportStatus | "";
   matterportUrl?: string;
   matterportEmbedUrl?: string;
   matterportLocalManifestUrl?: string;
@@ -150,28 +152,55 @@ function validateMatterportFields(
   value: MatterportValidationInput,
   ctx: z.RefinementCtx,
 ) {
-  if (value.visitType !== VisitType.MATTERPORT) return;
+  if (value.status !== PropertyStatus.PUBLISHED) return;
+
+  if (value.visitType !== VisitType.MATTERPORT) {
+    if (!value.modelUrl?.trim()) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["modelUrl"],
+        message: "Ajoutez un modèle 3D avant publication.",
+      });
+    }
+    return;
+  }
 
   const mode = value.matterportImportMode || MatterportImportMode.EMBED;
   const hasEmbed = Boolean(value.matterportUrl?.trim() || value.matterportEmbedUrl?.trim());
-  const hasLocalManifest = Boolean(value.matterportLocalManifestUrl?.trim() || value.modelUrl?.trim());
+  const hasLocalManifest = Boolean(value.matterportLocalManifestUrl?.trim());
+  const importIsReady =
+    value.matterportImportStatus === MatterportImportStatus.READY ||
+    value.matterportImportStatus === MatterportImportStatus.READY_PARTIAL;
 
   if (mode === MatterportImportMode.EMBED && !hasEmbed) {
     ctx.addIssue({
       code: "custom",
       path: ["matterportEmbedUrl"],
-      message: "Ajoutez un lien Matterport ou choisissez un import local.",
+      message: "Ajoutez un lien Matterport avant publication.",
     });
   }
 
   if (
     mode === MatterportImportMode.LOCAL_BACKUP_VIEWER &&
-    !hasLocalManifest
+    !hasLocalManifest &&
+    !importIsReady
   ) {
     ctx.addIssue({
       code: "custom",
       path: ["matterportLocalManifestUrl"],
-      message: "Importez un ZIP Matterport pour créer la visite locale.",
+      message: "Importez le ZIP Matterport avant publication.",
+    });
+  }
+
+  if (
+    mode !== MatterportImportMode.EMBED &&
+    mode !== MatterportImportMode.LOCAL_BACKUP_VIEWER &&
+    !value.modelUrl?.trim()
+  ) {
+    ctx.addIssue({
+      code: "custom",
+      path: ["modelUrl"],
+      message: "Ajoutez le fichier local Matterport avant publication.",
     });
   }
 }

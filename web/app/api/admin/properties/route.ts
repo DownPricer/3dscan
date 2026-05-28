@@ -18,7 +18,7 @@ function normalizePropertyPayload(input: unknown) {
       price: parsed.price === "" ? null : parsed.price ?? null,
       description: normalizeOptionalString(parsed.description),
       coverImageUrl: normalizeOptionalString(parsed.coverImageUrl),
-      modelUrl: parsed.modelUrl,
+      modelUrl: parsed.modelUrl ?? "",
       modelType: parsed.modelType,
       visitType: parsed.visitType,
       matterportUrl: normalizeOptionalString(parsed.matterportUrl),
