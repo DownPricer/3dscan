@@ -70,9 +70,17 @@ export const propertySchema = z.object({
         "URL d'embed Matterport invalide. Utilisez un lien https://*.matterport.com/…",
     }),
   matterportModelId: z.string().trim().optional().or(z.literal("")),
-  matterportImportMode: z.nativeEnum(MatterportImportMode).optional(),
+  matterportImportMode: z
+    .nativeEnum(MatterportImportMode)
+    .optional()
+    .or(z.literal(""))
+    .transform((value) => (value === "" ? undefined : value)),
   matterportZipOriginalName: z.string().trim().optional().or(z.literal("")),
-  matterportImportStatus: z.nativeEnum(MatterportImportStatus).optional(),
+  matterportImportStatus: z
+    .nativeEnum(MatterportImportStatus)
+    .optional()
+    .or(z.literal(""))
+    .transform((value) => (value === "" ? undefined : value)),
   matterportImportError: z.string().trim().optional().or(z.literal("")),
   status: z.nativeEnum(PropertyStatus),
   catalogEnabled: z.boolean().optional().default(false),
@@ -112,8 +120,16 @@ export const propertySchema = z.object({
     .refine((value) => !value || isHttpUrl(value), {
       message: "URL de l'annonce externe invalide (http/https).",
     }),
-  externalListingSource: z.nativeEnum(ExternalListingSource).optional().or(z.literal("")),
-  externalListingStatus: z.nativeEnum(ExternalListingStatus).optional(),
+  externalListingSource: z
+    .nativeEnum(ExternalListingSource)
+    .optional()
+    .or(z.literal(""))
+    .transform((value) => (value === "" ? undefined : value)),
+  externalListingStatus: z
+    .nativeEnum(ExternalListingStatus)
+    .optional()
+    .or(z.literal(""))
+    .transform((value) => (value === "" ? undefined : value)),
   panoramaScenes: z.array(panoramaSceneSchema).optional().default([]),
   hotspots: z.array(hotspotSchema).optional().default([]),
 });

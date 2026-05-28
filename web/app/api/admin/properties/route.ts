@@ -24,9 +24,13 @@ function normalizePropertyPayload(input: unknown) {
       matterportUrl: normalizeOptionalString(parsed.matterportUrl),
       matterportEmbedUrl: normalizeOptionalString(parsed.matterportEmbedUrl),
       matterportModelId: normalizeOptionalString(parsed.matterportModelId),
-      ...(parsed.matterportImportMode ? { matterportImportMode: parsed.matterportImportMode } : {}),
+      ...("matterportImportMode" in parsed
+        ? { matterportImportMode: parsed.matterportImportMode ?? null }
+        : {}),
       matterportZipOriginalName: normalizeOptionalString(parsed.matterportZipOriginalName),
-      ...(parsed.matterportImportStatus ? { matterportImportStatus: parsed.matterportImportStatus } : {}),
+      ...("matterportImportStatus" in parsed && parsed.matterportImportStatus
+        ? { matterportImportStatus: parsed.matterportImportStatus }
+        : {}),
       matterportImportError: normalizeOptionalString(parsed.matterportImportError),
       status: parsed.status,
       catalogEnabled: parsed.catalogEnabled ?? false,
@@ -56,10 +60,10 @@ function normalizePropertyPayload(input: unknown) {
       ...("externalListingSource" in parsed
         ? {
             externalListingSource:
-              parsed.externalListingSource === "" ? null : parsed.externalListingSource,
+              parsed.externalListingSource ?? null,
           }
         : {}),
-      ...(parsed.externalListingStatus
+      ...("externalListingStatus" in parsed && parsed.externalListingStatus
         ? { externalListingStatus: parsed.externalListingStatus }
         : {}),
     },

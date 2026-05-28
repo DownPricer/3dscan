@@ -86,7 +86,7 @@ export async function PATCH(request: NextRequest, { params }: Params) {
           ...("matterportImportMode" in parsed
             ? {
                 matterportImportMode:
-                  parsed.matterportImportMode === "" ? null : parsed.matterportImportMode,
+                  parsed.matterportImportMode ?? null,
               }
             : {}),
           ...("matterportZipOriginalName" in parsed
@@ -167,10 +167,10 @@ export async function PATCH(request: NextRequest, { params }: Params) {
           ...("externalListingSource" in parsed
             ? {
                 externalListingSource:
-                  parsed.externalListingSource === "" ? null : parsed.externalListingSource,
+                  parsed.externalListingSource ?? null,
               }
             : {}),
-          ...("externalListingStatus" in parsed
+          ...("externalListingStatus" in parsed && parsed.externalListingStatus
             ? { externalListingStatus: parsed.externalListingStatus }
             : {}),
         },
