@@ -1,9 +1,9 @@
 "use client";
 
-import { Canvas, useFrame, useLoader, useThree } from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { ChevronLeft, ChevronRight, Expand, MapPin, RotateCcw } from "lucide-react";
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
-import { CubeTextureLoader, SRGBColorSpace } from "three";
+import { CubeTextureLoader, SRGBColorSpace, type CubeTexture } from "three";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import { OrbitControls } from "@react-three/drei";
 import { Button } from "@/components/ui/button";
@@ -53,12 +53,34 @@ function CubeBackground({
   files: string[];
   resetSignal: number;
 }) {
-  const texture = useLoader(CubeTextureLoader, files);
+  const [texture, setTexture] = useState<CubeTexture | null>(null);
   const { scene, camera } = useThree();
   const controlsRef = useRef<OrbitControlsImpl | null>(null);
 
   useEffect(() => {
-    texture.colorSpace = SRGBColorSpace;
+    const loader = new CubeTextureLoader();
+    let cancelled = false;
+
+    loader.load(files, (loaded) => {
+      if (cancelled) {
+        loaded.dispose();
+        return;
+      }
+      loaded.colorSpace = SRGBColorSpace;
+      setTexture(loaded);
+    });
+
+    return () => {
+      cancelled = true;
+      setTexture((current) => {
+        current?.dispose();
+        return null;
+      });
+    };
+  }, [files]);
+
+  useEffect(() => {
+    if (!texture) return;
     scene.background = texture;
     return () => {
       scene.background = null;

@@ -23,6 +23,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { formatAdminError } from "@/lib/admin-error-messages";
 import type { HotspotInput, PanoramaSceneInput } from "@/lib/hybrid-types";
 import { parseMatterportInput } from "@/lib/matterport";
+import type { MatterportAuditSummary } from "@/lib/matterport-backup-audit";
 
 type PropertyFormValue = {
   id?: string;
@@ -62,15 +63,7 @@ type PropertyFormValue = {
   matterportImportError?: string | null;
   matterportLocalManifestUrl?: string | null;
   matterportAuditReportUrl?: string | null;
-  matterportAuditSummary?: {
-    totalFiles?: number;
-    imageCount?: number;
-    panoramaCandidates?: number;
-    cubeFaceSetCandidates?: number;
-    scanPointsFound?: number;
-    hasFloorplan?: boolean;
-    hasMesh?: boolean;
-  } | null;
+  matterportAuditSummary?: MatterportAuditSummary | null;
   status: "DRAFT" | "PUBLISHED";
   slug?: string;
   panoramaScenes?: { id: string; name: string; imageUrl: string; sortOrder: number }[];

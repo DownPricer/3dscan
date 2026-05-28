@@ -3,6 +3,7 @@ import { mkdir, readFile, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { inflateRaw } from "node:zlib";
 import { promisify } from "node:util";
+import type { Prisma } from "@prisma/client";
 
 const inflateRawAsync = promisify(inflateRaw);
 
@@ -85,6 +86,16 @@ export type AuditSummary = {
   hasCoordinates: boolean;
 };
 
+export type MatterportAuditSummary = {
+  totalFiles?: number;
+  imageCount?: number;
+  panoramaCandidates?: number;
+  cubeFaceSetCandidates?: number;
+  scanPointsFound?: number;
+  hasFloorplan?: boolean;
+  hasMesh?: boolean;
+};
+
 export type MatterportBackupAudit = {
   generatedAt: string;
   sourceName: string;
@@ -121,6 +132,31 @@ const metadataExtensions = new Set([".pb", ".mmp", ".dam", ".swl"]);
 const meshExtensions = new Set([".obj", ".glb", ".gltf", ".fbx", ".dae", ".ply", ".stl"]);
 const depthHints = [/depth/i, /_d\./i, /distance/i];
 const floorplanHints = [/floor/i, /plan/i, /map/i, /layout/i];
+
+export function normalizeMatterportAuditSummary(
+  value: Prisma.JsonValue | null | undefined,
+): MatterportAuditSummary | null {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+
+  const source = value as Record<string, unknown>;
+  const summary: MatterportAuditSummary = {};
+
+  if (typeof source.totalFiles === "number") summary.totalFiles = source.totalFiles;
+  if (typeof source.imageCount === "number") summary.imageCount = source.imageCount;
+  if (typeof source.panoramaCandidates === "number") {
+    summary.panoramaCandidates = source.panoramaCandidates;
+  }
+  if (typeof source.cubeFaceSetCandidates === "number") {
+    summary.cubeFaceSetCandidates = source.cubeFaceSetCandidates;
+  }
+  if (typeof source.scanPointsFound === "number") {
+    summary.scanPointsFound = source.scanPointsFound;
+  }
+  if (typeof source.hasFloorplan === "boolean") summary.hasFloorplan = source.hasFloorplan;
+  if (typeof source.hasMesh === "boolean") summary.hasMesh = source.hasMesh;
+
+  return Object.keys(summary).length > 0 ? summary : null;
+}
 
 function readUInt32LE(buf: Buffer, offset: number) {
   return buf.readUInt32LE(offset);

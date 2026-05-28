@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PropertyForm } from "@/components/admin/property-form";
+import { normalizeMatterportAuditSummary } from "@/lib/matterport-backup-audit";
 import { prisma } from "@/lib/prisma";
 
 type Props = {
@@ -19,6 +20,11 @@ export default async function EditPropertyPage({ params }: Props) {
 
   if (!property) notFound();
 
+  const propertyForForm = {
+    ...property,
+    matterportAuditSummary: normalizeMatterportAuditSummary(property.matterportAuditSummary),
+  };
+
   return (
     <div className="space-y-8">
       <div>
@@ -32,7 +38,7 @@ export default async function EditPropertyPage({ params }: Props) {
           Mettez à jour les informations, le statut ou remplacez le modèle 3D.
         </p>
       </div>
-      <PropertyForm property={property} />
+      <PropertyForm property={propertyForForm} />
     </div>
   );
 }
