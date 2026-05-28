@@ -41,7 +41,7 @@ export const hotspotSchema = z.object({
   panoramaSceneId: z.string().trim().optional().nullable(),
 });
 
-export const propertySchema = z.object({
+const propertyShape = {
   name: z.string().trim().min(2, "Le nom est obligatoire."),
   address: z.string().trim().optional().or(z.literal("")),
   city: z.string().trim().optional().or(z.literal("")),
@@ -135,13 +135,54 @@ export const propertySchema = z.object({
     .transform((value) => (value === "" ? undefined : value)),
   panoramaScenes: z.array(panoramaSceneSchema).optional().default([]),
   hotspots: z.array(hotspotSchema).optional().default([]),
-});
+};
 
-export const propertyUpdateSchema = propertySchema.partial().extend({
+type MatterportValidationInput = {
+  visitType?: VisitType;
+  matterportImportMode?: MatterportImportMode | "";
+  matterportUrl?: string;
+  matterportEmbedUrl?: string;
+  matterportLocalManifestUrl?: string;
+  modelUrl?: string;
+};
+
+function validateMatterportFields(
+  value: MatterportValidationInput,
+  ctx: z.RefinementCtx,
+) {
+  if (value.visitType !== VisitType.MATTERPORT) return;
+
+  const mode = value.matterportImportMode || MatterportImportMode.EMBED;
+  const hasEmbed = Boolean(value.matterportUrl?.trim() || value.matterportEmbedUrl?.trim());
+  const hasLocalManifest = Boolean(value.matterportLocalManifestUrl?.trim() || value.modelUrl?.trim());
+
+  if (mode === MatterportImportMode.EMBED && !hasEmbed) {
+    ctx.addIssue({
+      code: "custom",
+      path: ["matterportEmbedUrl"],
+      message: "Ajoutez un lien Matterport ou choisissez un import local.",
+    });
+  }
+
+  if (
+    mode === MatterportImportMode.LOCAL_BACKUP_VIEWER &&
+    !hasLocalManifest
+  ) {
+    ctx.addIssue({
+      code: "custom",
+      path: ["matterportLocalManifestUrl"],
+      message: "Importez un ZIP Matterport pour créer la visite locale.",
+    });
+  }
+}
+
+export const propertySchema = z.object(propertyShape).superRefine(validateMatterportFields);
+
+export const propertyUpdateSchema = z.object(propertyShape).partial().extend({
   name: z.string().trim().min(2, "Le nom est obligatoire.").optional(),
   panoramaScenes: z.array(panoramaSceneSchema).optional(),
   hotspots: z.array(hotspotSchema).optional(),
-});
+}).superRefine(validateMatterportFields);
 
 export type PropertyInput = z.infer<typeof propertySchema>;
 
