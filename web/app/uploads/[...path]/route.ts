@@ -5,6 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 export const runtime = "nodejs";
 
 const UPLOADS_ROOT = path.join(process.cwd(), "public", "uploads");
+const ALLOWED_UPLOAD_ROOTS = new Set(["models", "panoramas", "covers", "matterport"]);
 
 function contentTypeFor(filename: string): string | null {
   switch (path.extname(filename).toLowerCase()) {
@@ -20,6 +21,8 @@ function contentTypeFor(filename: string): string | null {
       return "application/octet-stream";
     case ".zip":
       return "application/zip";
+    case ".json":
+      return "application/json; charset=utf-8";
     case ".png":
       return "image/png";
     case ".jpg":
@@ -37,6 +40,10 @@ function contentTypeFor(filename: string): string | null {
 }
 
 function resolveUploadPath(segments: string[]): string | null {
+  if (!ALLOWED_UPLOAD_ROOTS.has(segments[0] ?? "")) {
+    return null;
+  }
+
   if (
     segments.some(
       (segment) =>
