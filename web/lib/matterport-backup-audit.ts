@@ -75,6 +75,10 @@ export type MatterportLocalManifest = {
 export type AuditSummary = {
   totalFiles: number;
   totalBytes: number;
+  sourceZipBytes?: number;
+  extractedBytes?: number;
+  importLimitMb?: number;
+  optimizedImageCount?: number;
   extensionCounts: Record<string, number>;
   imageCount: number;
   panoramaCandidates: number;
@@ -88,6 +92,11 @@ export type AuditSummary = {
 
 export type MatterportAuditSummary = {
   totalFiles?: number;
+  totalBytes?: number;
+  sourceZipBytes?: number;
+  extractedBytes?: number;
+  importLimitMb?: number;
+  optimizedImageCount?: number;
   imageCount?: number;
   panoramaCandidates?: number;
   cubeFaceSetCandidates?: number;
@@ -125,6 +134,11 @@ type AuditOptions = {
   relPaths: string[];
   sourceName: string;
   publicBaseUrl?: string;
+  imageUrlOverrides?: Record<string, string>;
+  sourceZipBytes?: number;
+  extractedBytes?: number;
+  importLimitMb?: number;
+  optimizedImageCount?: number;
 };
 
 const imageExtensions = new Set([".jpg", ".jpeg", ".png", ".bmp"]);
@@ -142,6 +156,13 @@ export function normalizeMatterportAuditSummary(
   const summary: MatterportAuditSummary = {};
 
   if (typeof source.totalFiles === "number") summary.totalFiles = source.totalFiles;
+  if (typeof source.totalBytes === "number") summary.totalBytes = source.totalBytes;
+  if (typeof source.sourceZipBytes === "number") summary.sourceZipBytes = source.sourceZipBytes;
+  if (typeof source.extractedBytes === "number") summary.extractedBytes = source.extractedBytes;
+  if (typeof source.importLimitMb === "number") summary.importLimitMb = source.importLimitMb;
+  if (typeof source.optimizedImageCount === "number") {
+    summary.optimizedImageCount = source.optimizedImageCount;
+  }
   if (typeof source.imageCount === "number") summary.imageCount = source.imageCount;
   if (typeof source.panoramaCandidates === "number") {
     summary.panoramaCandidates = source.panoramaCandidates;
@@ -451,12 +472,22 @@ function decodeProtobufRaw(buffer: Buffer, depth = 0): unknown[] {
   return fields;
 }
 
-function publicUrlFor(relPath: string, publicBaseUrl?: string) {
+function publicUrlFor(
+  relPath: string,
+  publicBaseUrl?: string,
+  imageUrlOverrides?: Record<string, string>,
+) {
+  const override = imageUrlOverrides?.[relPath];
+  if (override) return override;
   if (!publicBaseUrl) return relPath;
   return `${publicBaseUrl.replace(/\/$/, "")}/${relPath.split("/").map(encodeURIComponent).join("/")}`;
 }
 
-function findCubeGroups(images: ImageInventory[], publicBaseUrl?: string) {
+function findCubeGroups(
+  images: ImageInventory[],
+  publicBaseUrl?: string,
+  imageUrlOverrides?: Record<string, string>,
+) {
   const groups = new Map<string, ImageInventory[]>();
   for (const image of images) {
     if (image.kind !== "cube_face_candidate") continue;
@@ -472,7 +503,7 @@ function findCubeGroups(images: ImageInventory[], publicBaseUrl?: string) {
     .map((group) => ({
       id: `cube-${randomUUID()}`,
       file: null,
-      files: group.faces.map((face) => publicUrlFor(face.path, publicBaseUrl)),
+      files: group.faces.map((face) => publicUrlFor(face.path, publicBaseUrl, imageUrlOverrides)),
       width: group.faces[0]?.width ?? null,
       height: group.faces[0]?.height ?? null,
       kind: "cube_face_set_candidate" as const,
@@ -481,13 +512,17 @@ function findCubeGroups(images: ImageInventory[], publicBaseUrl?: string) {
     }));
 }
 
-function buildManifest(images: ImageInventory[], files: FileInventory[], publicBaseUrl?: string): MatterportLocalManifest {
+function buildManifest(
+  images: ImageInventory[],
+  files: FileInventory[],
+  options: AuditOptions,
+): MatterportLocalManifest {
   const equirectangular = images
     .filter((image) => image.kind === "equirectangular_candidate")
     .sort((a, b) => (b.width ?? 0) * (b.height ?? 0) - (a.width ?? 0) * (a.height ?? 0))
     .map((image) => ({
       id: `pano-${randomUUID()}`,
-      file: publicUrlFor(image.path, publicBaseUrl),
+      file: publicUrlFor(image.path, options.publicBaseUrl, options.imageUrlOverrides),
       width: image.width,
       height: image.height,
       kind: "equirectangular_candidate" as const,
@@ -495,11 +530,11 @@ function buildManifest(images: ImageInventory[], files: FileInventory[], publicB
       rotation: null,
     }));
 
-  const cubeGroups = findCubeGroups(images, publicBaseUrl);
+  const cubeGroups = findCubeGroups(images, options.publicBaseUrl, options.imageUrlOverrides);
   const panoramas = [...equirectangular, ...cubeGroups];
   const floorplans = images
     .filter((image) => floorplanHints.some((hint) => hint.test(image.path)))
-    .map((image) => publicUrlFor(image.path, publicBaseUrl));
+    .map((image) => publicUrlFor(image.path, options.publicBaseUrl, options.imageUrlOverrides));
   const unsupportedFiles = files
     .filter((file) => !imageExtensions.has(file.extension) && !metadataExtensions.has(file.extension) && !meshExtensions.has(file.extension))
     .map((file) => file.path);
@@ -508,6 +543,10 @@ function buildManifest(images: ImageInventory[], files: FileInventory[], publicB
   const summary: AuditSummary = {
     totalFiles: files.length,
     totalBytes: files.reduce((sum, file) => sum + file.size, 0),
+    sourceZipBytes: options.sourceZipBytes,
+    extractedBytes: options.extractedBytes,
+    importLimitMb: options.importLimitMb,
+    optimizedImageCount: options.optimizedImageCount ?? 0,
     extensionCounts: files.reduce<Record<string, number>>((acc, file) => {
       const key = file.extension || "(none)";
       acc[key] = (acc[key] ?? 0) + 1;
@@ -583,7 +622,7 @@ export async function auditExtractedMatterportBackup(options: AuditOptions): Pro
     files.push(inventory);
   }
 
-  const manifest = buildManifest(images, files, options.publicBaseUrl);
+  const manifest = buildManifest(images, files, options);
   const answers = {
     panoramas360:
       manifest.summary.panoramaCandidates > 0
@@ -657,8 +696,12 @@ Généré: ${audit.generatedAt}
 
 ## Résumé
 - Fichiers analysés: ${s.totalFiles}
+- Taille ZIP source: ${s.sourceZipBytes ?? "n/a"} octets
 - Taille totale extraite: ${s.totalBytes} octets
+- Taille extraite mesurée: ${s.extractedBytes ?? "n/a"} octets
+- Limite import: ${s.importLimitMb ?? "n/a"} Mo
 - Images: ${s.imageCount}
+- Images optimisées: ${s.optimizedImageCount ?? 0}
 - Panoramas 2:1 candidats: ${s.panoramaCandidates}
 - Groupes cube faces candidats: ${s.cubeFaceSetCandidates}
 - Scan points reconstruits: ${s.scanPointsFound}

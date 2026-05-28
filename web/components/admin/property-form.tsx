@@ -91,6 +91,18 @@ function isMatterportLocalMode(mode: MatterportImportMode) {
   return mode !== MatterportImportMode.EMBED;
 }
 
+function formatBytes(value?: number) {
+  if (!value || value <= 0) return "—";
+  const units = ["octets", "Ko", "Mo", "Go"];
+  let size = value;
+  let unit = 0;
+  while (size >= 1024 && unit < units.length - 1) {
+    size /= 1024;
+    unit++;
+  }
+  return `${size.toFixed(unit === 0 ? 0 : 1)} ${units[unit]}`;
+}
+
 export function PropertyForm({ property }: { property?: PropertyFormValue }) {
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
@@ -1031,9 +1043,19 @@ export function PropertyForm({ property }: { property?: PropertyFormValue }) {
                     ) : null}
                     {matterportAuditSummary ? (
                       <div className="mt-3 grid gap-1 sm:grid-cols-2">
+                        <p>ZIP source : {formatBytes(matterportAuditSummary.sourceZipBytes)}</p>
+                        <p>
+                          Taille extraite :{" "}
+                          {formatBytes(
+                            matterportAuditSummary.extractedBytes ??
+                              matterportAuditSummary.totalBytes,
+                          )}
+                        </p>
                         <p>Fichiers analysés : {matterportAuditSummary.totalFiles ?? 0}</p>
                         <p>Images : {matterportAuditSummary.imageCount ?? 0}</p>
                         <p>Panoramas trouvés : {panoramaCandidateCount}</p>
+                        <p>Images optimisées : {matterportAuditSummary.optimizedImageCount ?? 0}</p>
+                        <p>Limite actuelle : {matterportAuditSummary.importLimitMb ?? "—"} Mo</p>
                         <p>Scan points : {matterportAuditSummary.scanPointsFound ?? 0}</p>
                         <p>Plan détecté : {matterportAuditSummary.hasFloorplan ? "oui" : "non"}</p>
                         <p>Mesh détecté : {matterportAuditSummary.hasMesh ? "oui" : "non"}</p>

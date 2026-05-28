@@ -1,14 +1,16 @@
 import { randomUUID } from "node:crypto";
-import { access, mkdir, readFile, stat, writeFile } from "node:fs/promises";
+import { access, mkdir, readFile, rm, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { inflateRaw } from "node:zlib";
 import { MatterportImportMode, MatterportImportStatus, ModelType, VisitType } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import { promisify } from "node:util";
+import sharp from "sharp";
 import { requireAdminRequest } from "@/lib/auth";
 import { env } from "@/lib/env";
 import {
   auditExtractedMatterportBackup,
+  type MatterportBackupAudit,
   renderMatterportAuditMarkdown,
 } from "@/lib/matterport-backup-audit";
 import { prisma } from "@/lib/prisma";
@@ -16,6 +18,30 @@ import { prisma } from "@/lib/prisma";
 export const runtime = "nodejs";
 
 const inflateRawAsync = promisify(inflateRaw);
+const matterportAllowedZipExtensions = new Set([
+  "",
+  ".obj",
+  ".mtl",
+  ".jpg",
+  ".jpeg",
+  ".png",
+  ".bmp",
+  ".glb",
+  ".gltf",
+  ".bin",
+  ".json",
+  ".e57",
+  ".xyz",
+  ".pdf",
+  ".pb",
+  ".mmp",
+  ".dam",
+  ".swl",
+  ".mfst",
+  ".txt",
+]);
+const maxOptimizedPanoramaWidth = 8192;
+const optimizedJpegQuality = 84;
 
 function toPosixPath(p: string) {
   return p.replace(/\\/g, "/");
@@ -38,6 +64,17 @@ function safeZipRelPath(entryPath: string) {
 function extensionOf(filename: string) {
   const dotIndex = filename.lastIndexOf(".");
   return dotIndex >= 0 ? filename.slice(dotIndex).toLowerCase() : "";
+}
+
+function isAllowedMatterportBackupFile(relPath: string) {
+  const ext = extensionOf(relPath);
+  if (!matterportAllowedZipExtensions.has(ext)) return false;
+  if (ext) return true;
+  return path.posix.basename(relPath).startsWith("backup_data");
+}
+
+function matterportLimitError(limitMb: number) {
+  return `Le ZIP Matterport est trop volumineux pour la limite actuelle. Limite : ${limitMb} Mo. Augmentez MATTERPORT_IMPORT_MAX_UNCOMPRESSED_MB si nécessaire.`;
 }
 
 function lastToken(value: string) {
@@ -150,17 +187,27 @@ async function extractEntryToDisk(args: {
   entry: CentralEntry;
   outputDir: string;
   maxTotalBytes: number;
+  maxFileBytes: number;
+  limitMb: number;
   currentTotalBytes: number;
 }): Promise<{ rel: string | null; totalBytes: number }> {
-  const { zip, entry, outputDir, maxTotalBytes } = args;
+  const { zip, entry, outputDir, maxTotalBytes, maxFileBytes, limitMb } = args;
   let totalBytes = args.currentTotalBytes;
 
   const rawPath = entry.filename;
   const normalized = safeZipRelPath(rawPath);
   if (!normalized) return { rel: null, totalBytes };
+  if (!isAllowedMatterportBackupFile(normalized)) return { rel: null, totalBytes };
+  if (entry.uncompressedSize > maxFileBytes) {
+    throw new Error(
+      `Le fichier ${normalized} est trop volumineux pour l’import Matterport. Limite par fichier : ${Math.round(
+        maxFileBytes / 1024 / 1024,
+      )} Mo.`,
+    );
+  }
   totalBytes += entry.uncompressedSize;
   if (totalBytes > maxTotalBytes) {
-    throw new Error(`Extraction interrompue : le contenu dépasse la limite de ${env.uploadMaxSizeMb} Mo.`);
+    throw new Error(matterportLimitError(limitMb));
   }
 
   const localOffset = entry.localHeaderOffset;
@@ -193,7 +240,7 @@ async function extractEntryToDisk(args: {
     if (delta > 0) {
       totalBytes += delta;
       if (totalBytes > maxTotalBytes) {
-        throw new Error(`Extraction interrompue : le contenu dépasse la limite de ${env.uploadMaxSizeMb} Mo.`);
+        throw new Error(matterportLimitError(limitMb));
       }
     }
   }
@@ -208,6 +255,42 @@ async function extractEntryToDisk(args: {
   await mkdir(path.dirname(destPath), { recursive: true });
   await writeFile(destPath, content);
   return { rel: normalized, totalBytes };
+}
+
+function optimizedRelPathForImage(relPath: string) {
+  const parsed = path.posix.parse(relPath);
+  return path.posix.join("web", parsed.dir, `${parsed.name}.jpg`);
+}
+
+async function optimizeMatterportPanoramas(args: {
+  audit: MatterportBackupAudit;
+  outputDir: string;
+  publicBaseUrl: string;
+}) {
+  const overrides: Record<string, string> = {};
+  let optimizedImageCount = 0;
+
+  for (const image of args.audit.images) {
+    if (image.kind !== "equirectangular_candidate") continue;
+    const source = path.join(args.outputDir, ...image.path.split("/"));
+    const optimizedRel = optimizedRelPathForImage(image.path);
+    const destination = path.join(args.outputDir, ...optimizedRel.split("/"));
+    await mkdir(path.dirname(destination), { recursive: true });
+
+    const pipeline = sharp(source).rotate();
+    if ((image.width ?? 0) > maxOptimizedPanoramaWidth) {
+      pipeline.resize({ width: maxOptimizedPanoramaWidth, withoutEnlargement: true });
+    }
+
+    await pipeline.jpeg({ quality: optimizedJpegQuality, mozjpeg: true }).toFile(destination);
+    overrides[image.path] = `${args.publicBaseUrl}/${optimizedRel
+      .split("/")
+      .map(encodeURIComponent)
+      .join("/")}`;
+    optimizedImageCount++;
+  }
+
+  return { overrides, optimizedImageCount };
 }
 
 export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -237,10 +320,12 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     return NextResponse.json({ ok: false, error: "Format invalide. Envoyez un .zip." }, { status: 400 });
   }
 
-  const maxBytes = env.uploadMaxSizeMb * 1024 * 1024;
+  const maxImportMb = env.matterportImportMaxUncompressedMb;
+  const maxBytes = maxImportMb * 1024 * 1024;
+  const maxFileBytes = Math.min(maxBytes, 1024 * 1024 * 1024);
   if (file.size > maxBytes) {
     return NextResponse.json(
-      { ok: false, error: `Le fichier dépasse la limite de ${env.uploadMaxSizeMb} Mo.` },
+      { ok: false, error: matterportLimitError(maxImportMb) },
       { status: 413 },
     );
   }
@@ -275,6 +360,8 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
         entry,
         outputDir,
         maxTotalBytes: maxBytes,
+        maxFileBytes,
+        limitMb: maxImportMb,
         currentTotalBytes: extractedBytes,
       });
       extractedBytes = result.totalBytes;
@@ -282,6 +369,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     }
   } catch (e) {
     const message = e instanceof Error ? e.message : "Extraction ZIP impossible.";
+    await rm(outputDir, { recursive: true, force: true });
     await prisma.property.update({
       where: { id },
       data: {
@@ -293,21 +381,55 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
   }
 
   const publicBaseUrl = `/uploads/matterport/${id}/${bundleId}`;
-  const audit = await auditExtractedMatterportBackup({
-    rootDir: outputDir,
-    relPaths: extractedRelPaths,
-    sourceName: file.name,
-    publicBaseUrl,
-  });
   const manifestRel = "matterport_local_manifest.json";
   const inventoryRel = "matterport_backup_inventory.json";
   const reportRel = "MATTERPORT_BACKUP_DEEP_AUDIT.md";
   const publicManifestUrl = `${publicBaseUrl}/${manifestRel}`;
   const publicReportUrl = `${publicBaseUrl}/${reportRel}`;
+  let audit: MatterportBackupAudit;
 
-  await writeFile(path.join(outputDir, manifestRel), JSON.stringify(audit.manifest, null, 2), "utf8");
-  await writeFile(path.join(outputDir, inventoryRel), JSON.stringify(audit, null, 2), "utf8");
-  await writeFile(path.join(outputDir, reportRel), renderMatterportAuditMarkdown(audit), "utf8");
+  try {
+    const initialAudit = await auditExtractedMatterportBackup({
+      rootDir: outputDir,
+      relPaths: extractedRelPaths,
+      sourceName: file.name,
+      publicBaseUrl,
+      sourceZipBytes: file.size,
+      extractedBytes,
+      importLimitMb: maxImportMb,
+    });
+    const optimization = await optimizeMatterportPanoramas({
+      audit: initialAudit,
+      outputDir,
+      publicBaseUrl,
+    });
+    audit = await auditExtractedMatterportBackup({
+      rootDir: outputDir,
+      relPaths: extractedRelPaths,
+      sourceName: file.name,
+      publicBaseUrl,
+      imageUrlOverrides: optimization.overrides,
+      sourceZipBytes: file.size,
+      extractedBytes,
+      importLimitMb: maxImportMb,
+      optimizedImageCount: optimization.optimizedImageCount,
+    });
+
+    await writeFile(path.join(outputDir, manifestRel), JSON.stringify(audit.manifest, null, 2), "utf8");
+    await writeFile(path.join(outputDir, inventoryRel), JSON.stringify(audit, null, 2), "utf8");
+    await writeFile(path.join(outputDir, reportRel), renderMatterportAuditMarkdown(audit), "utf8");
+  } catch (e) {
+    const message = e instanceof Error ? e.message : "Audit Matterport impossible.";
+    await rm(outputDir, { recursive: true, force: true });
+    await prisma.property.update({
+      where: { id },
+      data: {
+        matterportImportStatus: MatterportImportStatus.ERROR,
+        matterportImportError: message,
+      },
+    });
+    return NextResponse.json({ ok: false, error: message }, { status: 400 });
+  }
   const auditData = {
     matterportLocalManifestUrl: publicManifestUrl,
     matterportAuditReportUrl: publicReportUrl,
