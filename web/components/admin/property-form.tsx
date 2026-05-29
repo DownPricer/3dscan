@@ -6,6 +6,7 @@ import {
   ExternalListingStatus,
   MatterportImportMode,
   MatterportImportStatus,
+  PropertyStatus,
   VisitType,
 } from "@prisma/client";
 import { useRouter } from "next/navigation";
@@ -21,6 +22,11 @@ import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { formatAdminError } from "@/lib/admin-error-messages";
+import {
+  getCatalogVisibilityReasons,
+  isVisibleInCatalog,
+  resolveCatalogOnPublish,
+} from "@/lib/catalog-visibility";
 import type { HotspotInput, PanoramaSceneInput } from "@/lib/hybrid-types";
 import { parseMatterportInput } from "@/lib/matterport";
 import type { MatterportAuditSummary } from "@/lib/matterport-backup-audit";
@@ -103,6 +109,21 @@ function formatBytes(value?: number) {
   return `${size.toFixed(unit === 0 ? 0 : 1)} ${units[unit]}`;
 }
 
+function AdminSectionHeader({
+  title,
+  description,
+}: {
+  title: string;
+  description?: string;
+}) {
+  return (
+    <div className="section-admin">
+      <h2 className="text-xl font-black text-[#0f2f3f]">{title}</h2>
+      {description ? <p className="text-muted mt-1 text-sm">{description}</p> : null}
+    </div>
+  );
+}
+
 export function PropertyForm({ property }: { property?: PropertyFormValue }) {
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
@@ -183,6 +204,31 @@ export function PropertyForm({ property }: { property?: PropertyFormValue }) {
   const [uploadingPanoramaIndex, setUploadingPanoramaIndex] = useState<number | null>(null);
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
   const [checkingExternal, setCheckingExternal] = useState(false);
+  const [showInCatalogOnPublish, setShowInCatalogOnPublish] = useState(
+    property?.catalogEnabled ?? true,
+  );
+  const [catalogEnabledPreview, setCatalogEnabledPreview] = useState(
+    Boolean(property?.catalogEnabled),
+  );
+  const [catalogStatusPreview, setCatalogStatusPreview] = useState<CatalogStatus>(
+    property?.catalogStatus ?? CatalogStatus.DRAFT,
+  );
+  const [propertyStatusPreview, setPropertyStatusPreview] = useState<PropertyStatus>(
+    property?.status ?? PropertyStatus.DRAFT,
+  );
+
+  const catalogVisibilityPreview = {
+    status: propertyStatusPreview,
+    catalogEnabled: catalogEnabledPreview,
+    catalogStatus: catalogStatusPreview,
+    externalListingUrl: property?.externalListingUrl ?? null,
+    externalListingStatus:
+      property?.externalListingStatus ?? ExternalListingStatus.UNKNOWN,
+    catalogCoverImageUrl: catalogCoverImageUrl,
+    coverImageUrl: uploadState.coverImageUrl ?? property?.coverImageUrl ?? null,
+  };
+  const visibleInCatalogPreview = isVisibleInCatalog(catalogVisibilityPreview);
+  const catalogVisibilityReasons = getCatalogVisibilityReasons(catalogVisibilityPreview);
 
   function buildPayload(statusOverride?: "DRAFT" | "PUBLISHED") {
     const form = formRef.current;
@@ -202,6 +248,24 @@ export function PropertyForm({ property }: { property?: PropertyFormValue }) {
         ? "ZIP"
         : uploadState.modelType;
 
+    const intendedStatus =
+      statusOverride ?? ((formData.get("status") as "DRAFT" | "PUBLISHED") ?? "DRAFT");
+    const publishInCatalog =
+      intendedStatus === "PUBLISHED" && formData.get("showInCatalogOnPublish") === "on";
+    let catalogEnabled = formData.get("catalogEnabled") === "on";
+    let catalogStatus = (formData.get("catalogStatus") as CatalogStatus) ?? CatalogStatus.DRAFT;
+    const externalListingUrl = String(formData.get("externalListingUrl") ?? "");
+
+    if (publishInCatalog) {
+      const catalogPatch = resolveCatalogOnPublish({
+        showInCatalog: true,
+        catalogStatus,
+        externalListingUrl,
+      });
+      catalogEnabled = catalogPatch.catalogEnabled ?? catalogEnabled;
+      catalogStatus = catalogPatch.catalogStatus ?? catalogStatus;
+    }
+
     return {
       name: formData.get("name"),
       address: formData.get("address"),
@@ -210,8 +274,8 @@ export function PropertyForm({ property }: { property?: PropertyFormValue }) {
       price: formData.get("price") || "",
       description: formData.get("description"),
       coverImageUrl: uploadState.coverImageUrl ?? "",
-      catalogEnabled: formData.get("catalogEnabled") === "on",
-      catalogStatus: formData.get("catalogStatus") ?? CatalogStatus.DRAFT,
+      catalogEnabled,
+      catalogStatus,
       catalogTitle: formData.get("catalogTitle"),
       catalogDescription: formData.get("catalogDescription"),
       catalogPrice: formData.get("catalogPrice") || "",
@@ -221,12 +285,12 @@ export function PropertyForm({ property }: { property?: PropertyFormValue }) {
       catalogRooms: formData.get("catalogRooms") || "",
       catalogBedrooms: formData.get("catalogBedrooms") || "",
       catalogCoverImageUrl: catalogCoverImageUrl ?? "",
-      externalListingUrl: formData.get("externalListingUrl"),
+      externalListingUrl,
       externalListingSource: formData.get("externalListingSource") ?? "",
       modelUrl: effectiveModelUrl,
       modelType: effectiveModelType,
       visitType,
-      status: statusOverride ?? formData.get("status"),
+      status: intendedStatus,
       matterportUrl: matterportUrl ?? "",
       matterportEmbedUrl: matterportEmbedUrl ?? "",
       matterportModelId: matterportModelId ?? "",
@@ -318,6 +382,11 @@ export function PropertyForm({ property }: { property?: PropertyFormValue }) {
 
     if (data.property?.id) setPropertyId(data.property.id);
     if (data.publicUrl) setSuccessUrl(data.publicUrl);
+    setPropertyStatusPreview(intendedStatus);
+    setCatalogEnabledPreview(Boolean(payload.catalogEnabled));
+    setCatalogStatusPreview(
+      (payload.catalogStatus as CatalogStatus) ?? CatalogStatus.DRAFT,
+    );
     setSaveStatus("saved");
     if (isNewProperty && visitType === VisitType.MATTERPORT && data.property?.id) {
       router.push(`/admin/properties/${data.property.id}/edit`);
@@ -640,10 +709,14 @@ export function PropertyForm({ property }: { property?: PropertyFormValue }) {
     <form
       ref={formRef}
       onSubmit={submit}
-      className="grid gap-6 lg:grid-cols-[1fr_320px] xl:grid-cols-[1fr_360px]"
+      className="grid gap-8 lg:grid-cols-[1fr_320px] xl:grid-cols-[1fr_360px]"
     >
-      <div className="space-y-6">
+      <div className="space-y-8">
         <Card className="space-y-5 bg-white">
+          <AdminSectionHeader
+            title="Informations générales"
+            description="Nom, adresse, prix et description de base du bien."
+          />
           <div className="grid gap-5 md:grid-cols-2">
             <div className="space-y-2 md:col-span-2">
               <Label htmlFor="name">Nom de la propriété *</Label>
@@ -695,25 +768,23 @@ export function PropertyForm({ property }: { property?: PropertyFormValue }) {
         </Card>
 
         <Card className="space-y-5 bg-white">
-          <div>
-            <h2 className="text-xl font-black text-[#0f2f3f]">Catalogue public</h2>
-            <p className="mt-1 text-sm text-[#667085]">
-              Ces informations sont utilisées pour la page catalogue (<code>/</code>) et la fiche
-              publique du bien (<code>/bien/[slug]</code>).
-            </p>
-          </div>
+          <AdminSectionHeader
+            title="Catalogue public"
+            description="Informations affichées sur / et /bien/[slug]. Le lien Leboncoin est optionnel."
+          />
 
-          <div className="flex items-center justify-between gap-4 rounded-2xl border border-[#eee7dc] bg-[#f7f5f0]/60 p-4">
+          <div className="flex items-center justify-between gap-4 rounded-2xl border-2 border-[#0f2f3f]/15 bg-[#f7f5f0] p-4">
             <div>
               <p className="font-bold text-[#0f2f3f]">Afficher dans le catalogue</p>
-              <p className="text-sm text-[#667085]">
-                Si désactivé, le bien n’apparaît pas publiquement dans le catalogue.
+              <p className="text-muted text-sm">
+                Si désactivé, le bien n&apos;apparaît pas publiquement dans le catalogue.
               </p>
             </div>
             <input
               name="catalogEnabled"
               type="checkbox"
-              defaultChecked={Boolean(property?.catalogEnabled)}
+              checked={catalogEnabledPreview}
+              onChange={(event) => setCatalogEnabledPreview(event.target.checked)}
               className="h-5 w-5 accent-[#2f6f5e]"
             />
           </div>
@@ -724,7 +795,10 @@ export function PropertyForm({ property }: { property?: PropertyFormValue }) {
               <Select
                 id="catalogStatus"
                 name="catalogStatus"
-                defaultValue={property?.catalogStatus ?? CatalogStatus.DRAFT}
+                value={catalogStatusPreview}
+                onChange={(event) =>
+                  setCatalogStatusPreview(event.target.value as CatalogStatus)
+                }
               >
                 <option value={CatalogStatus.DRAFT}>Brouillon</option>
                 <option value={CatalogStatus.ONLINE}>En ligne</option>
@@ -900,9 +974,51 @@ export function PropertyForm({ property }: { property?: PropertyFormValue }) {
               </div>
             </div>
           ) : null}
+
+          <div
+            className={`rounded-2xl border p-4 ${
+              visibleInCatalogPreview
+                ? "border-emerald-200 bg-emerald-50/60"
+                : "border-amber-200 bg-amber-50/60"
+            }`}
+          >
+            <p className="font-bold text-[#0f2f3f]">Visibilité catalogue</p>
+            <div className="mt-3 grid gap-1 text-sm text-[#475467]">
+              <p>
+                <span className="font-semibold">Visite publiée :</span>{" "}
+                {propertyStatusPreview === PropertyStatus.PUBLISHED ? "oui" : "non"}
+              </p>
+              <p>
+                <span className="font-semibold">Catalogue activé :</span>{" "}
+                {catalogEnabledPreview ? "oui" : "non"}
+              </p>
+              <p>
+                <span className="font-semibold">Statut catalogue :</span> {catalogStatusPreview}
+              </p>
+              <p>
+                <span className="font-semibold">Lien externe :</span>{" "}
+                {property?.externalListingUrl?.trim()
+                  ? property.externalListingStatus ?? ExternalListingStatus.UNKNOWN
+                  : "vide"}
+              </p>
+              <p>
+                <span className="font-semibold">Visible sur le catalogue :</span>{" "}
+                {visibleInCatalogPreview ? "oui" : "non"}
+              </p>
+            </div>
+            <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-[#475467]">
+              {catalogVisibilityReasons.map((reason) => (
+                <li key={reason}>{reason}</li>
+              ))}
+            </ul>
+          </div>
         </Card>
 
         <Card className="space-y-5 bg-white">
+          <AdminSectionHeader
+            title="Visite 3D / 360 / hybride"
+            description="Modèle 3D, panoramas et points d'intérêt."
+          />
           <HybridTourWizard
             visitType={visitType}
             onVisitTypeChange={setVisitType}
@@ -936,13 +1052,10 @@ export function PropertyForm({ property }: { property?: PropertyFormValue }) {
 
         {visitType === VisitType.MATTERPORT ? (
           <Card className="space-y-5 bg-white">
-            <div>
-              <h2 className="text-xl font-black text-[#0f2f3f]">Visite Matterport</h2>
-              <p className="mt-1 text-sm text-[#667085]">
-                Importez un backup Matterport pour une visite locale, ou utilisez l’intégration
-                Matterport en ligne si vous voulez conserver l’iframe officielle.
-              </p>
-            </div>
+            <AdminSectionHeader
+              title="Visite Matterport"
+              description="Import local ZIP ou intégration iframe Matterport en ligne."
+            />
 
             <div className="grid gap-5">
               <div className="space-y-3 rounded-2xl border border-[#d7eadf] bg-emerald-50/40 p-4">
@@ -1157,13 +1270,11 @@ export function PropertyForm({ property }: { property?: PropertyFormValue }) {
         ) : null}
       </div>
 
-      <Card className="h-fit space-y-5 bg-white lg:sticky lg:top-6">
-        <div>
-          <h2 className="text-xl font-black text-[#0f2f3f]">Publication</h2>
-          <p className="mt-1 text-sm text-[#667085]">
-            Image de couverture optionnelle et statut de la visite.
-          </p>
-        </div>
+      <Card className="h-fit space-y-6 bg-white lg:sticky lg:top-6">
+        <AdminSectionHeader
+          title="Publication"
+          description="Couverture, statut et mise en ligne de la visite."
+        />
 
         <div className="space-y-2">
           <Label htmlFor="cover">Image de couverture</Label>
@@ -1183,20 +1294,47 @@ export function PropertyForm({ property }: { property?: PropertyFormValue }) {
 
         <div className="space-y-2">
           <Label htmlFor="status">Statut</Label>
-          <Select id="status" name="status" defaultValue={property?.status ?? "DRAFT"}>
-            <option value="DRAFT">Brouillon</option>
-            <option value="PUBLISHED">Publié</option>
+          <Select
+            id="status"
+            name="status"
+            value={propertyStatusPreview}
+            onChange={(event) =>
+              setPropertyStatusPreview(event.target.value as PropertyStatus)
+            }
+          >
+            <option value={PropertyStatus.DRAFT}>Brouillon</option>
+            <option value={PropertyStatus.PUBLISHED}>Publié</option>
           </Select>
+        </div>
+
+        <div className="flex items-start gap-3 rounded-2xl border border-[#eee7dc] bg-[#f7f5f0]/60 p-4">
+          <input
+            id="showInCatalogOnPublish"
+            name="showInCatalogOnPublish"
+            type="checkbox"
+            checked={showInCatalogOnPublish}
+            onChange={(event) => setShowInCatalogOnPublish(event.target.checked)}
+            className="mt-1 h-5 w-5 accent-[#2f6f5e]"
+          />
+          <div>
+            <Label htmlFor="showInCatalogOnPublish" className="font-bold text-[#0f2f3f]">
+              Afficher dans le catalogue public
+            </Label>
+            <p className="mt-1 text-sm text-[#667085]">
+              Lors de la publication, active le catalogue et met le statut En ligne. Le lien
+              Leboncoin reste optionnel.
+            </p>
+          </div>
         </div>
 
         {saveStatus !== "idle" ? (
           <p
-            className={`rounded-2xl p-3 text-sm font-semibold ${
+            className={`rounded-xl p-3 text-sm font-bold ${
               saveStatus === "saving"
-                ? "bg-[#f4f1ea] text-[#667085]"
+                ? "bg-[#f4f1ea] text-[#475467]"
                 : saveStatus === "saved"
-                  ? "bg-emerald-50 text-emerald-800"
-                  : "bg-red-50 text-red-700"
+                  ? "bg-emerald-100 text-emerald-900"
+                  : "bg-red-100 text-red-900"
             }`}
           >
             {saveStatus === "saving"
@@ -1208,10 +1346,10 @@ export function PropertyForm({ property }: { property?: PropertyFormValue }) {
         ) : null}
 
         {error ? (
-          <p className="rounded-2xl bg-red-50 p-3 text-sm text-red-700">{error}</p>
+          <p className="rounded-xl bg-red-100 p-3 text-sm font-semibold text-red-900">{error}</p>
         ) : null}
         {successUrl ? (
-          <div className="rounded-2xl bg-emerald-50 p-4 text-sm text-emerald-800">
+          <div className="rounded-xl bg-emerald-100 p-4 text-sm font-semibold text-emerald-900">
             <p className="font-bold">Visite enregistrée.</p>
             <a className="mt-1 block break-all underline" href={successUrl} target="_blank">
               Prévisualiser la visite
@@ -1249,7 +1387,7 @@ export function PropertyForm({ property }: { property?: PropertyFormValue }) {
           type="submit"
           name="intent"
           value="draft"
-          variant="secondary"
+          variant="outline"
           className="w-full"
           disabled={
             loading ||

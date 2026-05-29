@@ -1,14 +1,22 @@
 import Link from "next/link";
-import { CatalogStatus, ExternalListingStatus, PropertyStatus, VisitType } from "@prisma/client";
-import { Home, MapPin } from "lucide-react";
+import { VisitType } from "@prisma/client";
+import {
+  BedDouble,
+  Home,
+  LayoutGrid,
+  MapPin,
+  Maximize2,
+} from "lucide-react";
 import { unstable_noStore as noStore } from "next/cache";
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
+import { SiteHeader } from "@/components/catalog/site-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { readSessionToken } from "@/lib/auth";
 import { sessionCookieName } from "@/lib/auth-constants";
+import { isVisibleInCatalog } from "@/lib/catalog-visibility";
 import { prisma } from "@/lib/prisma";
 import { formatPrice } from "@/lib/utils";
 
@@ -80,11 +88,7 @@ export default async function BienDetailPage({ params }: Props) {
 
   if (!property) notFound();
 
-  const isPublic =
-    property.status === PropertyStatus.PUBLISHED &&
-    property.catalogEnabled &&
-    property.catalogStatus === CatalogStatus.ONLINE &&
-    property.externalListingStatus !== ExternalListingStatus.OFFLINE;
+  const isPublic = isVisibleInCatalog(property);
 
   let isPreview = false;
   if (!isPublic) {
@@ -100,102 +104,153 @@ export default async function BienDetailPage({ params }: Props) {
   const postal = property.catalogPostalCode ?? property.postalCode ?? null;
   const location = [city, postal].filter(Boolean).join(" ");
   const cover = property.catalogCoverImageUrl ?? property.coverImageUrl ?? null;
+  const bodyDescription =
+    property.catalogDescription?.trim() ||
+    property.description?.trim() ||
+    "Description à venir.";
 
   return (
     <main className="min-h-screen bg-[#f7f5f0]">
-      <header className="mx-auto flex max-w-7xl items-center justify-between px-6 py-6">
-        <Link href="/" className="text-lg font-black tracking-tight text-[#0f2f3f]">
-          Site Ready SHD
-        </Link>
-        <Button asChild variant="secondary" size="sm">
-          <Link href="/admin/login">Admin</Link>
-        </Button>
-      </header>
+      <SiteHeader />
 
-      <section className="mx-auto max-w-7xl px-6 pb-14">
-        {isPreview ? (
-          <div className="mb-6 rounded-2xl bg-amber-50 p-4 text-sm font-semibold text-amber-900">
-            Prévisualisation admin — ce bien n’est pas visible publiquement dans le catalogue.
+      {isPreview ? (
+        <div className="mx-auto max-w-7xl px-4 pt-6 sm:px-6">
+          <div className="rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-950">
+            Prévisualisation admin — ce bien n&apos;est pas visible publiquement dans le catalogue.
           </div>
-        ) : null}
+        </div>
+      ) : null}
 
-        <div className="grid gap-6 lg:grid-cols-[1.35fr_.65fr]">
-          <Card className="bg-white p-0 overflow-hidden">
-            <div className="relative h-[320px] w-full bg-[#0f2f3f]/5 md:h-[420px]">
-              {cover ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={cover} alt={title} className="h-full w-full object-cover" />
-              ) : (
-                <div className="flex h-full w-full items-center justify-center">
-                  <Home className="text-[#0f2f3f]/30" size={56} />
-                </div>
-              )}
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6">
+        <div className="relative mt-6 aspect-[16/9] min-h-[240px] w-full overflow-hidden rounded-3xl bg-[#e8e4dc] sm:min-h-[420px]">
+          {cover ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={cover} alt={title} className="h-full w-full object-cover" />
+          ) : (
+            <div className="flex h-full w-full flex-col items-center justify-center gap-3 bg-gradient-to-br from-[#e8e4dc] to-[#d4cfc4]">
+              <Home className="text-[#0f2f3f]/40" size={64} strokeWidth={1.5} />
+              <span className="text-base font-medium text-[#475467]">Photo à venir</span>
             </div>
-            <div className="p-8">
-              <div className="flex flex-wrap items-center gap-2">
-                <Badge>Visite virtuelle</Badge>
-                <Badge variant="published">{visitTypeLabel(property.visitType)}</Badge>
-              </div>
-              {property.visitType === VisitType.MATTERPORT ? (
-                <p className="mt-3 text-sm font-semibold text-[#2f6f5e]">
-                  Visite Matterport immersive
-                </p>
-              ) : null}
-              <h1 className="mt-4 text-4xl font-black tracking-tight text-[#0f2f3f]">
+          )}
+          <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/60 to-transparent" />
+          <div className="absolute left-4 top-4 flex flex-wrap gap-2">
+            <Badge variant="overlay">Visite virtuelle</Badge>
+            <Badge variant="overlay">{visitTypeLabel(property.visitType)}</Badge>
+          </div>
+        </div>
+      </div>
+
+      <section className="mx-auto max-w-7xl px-4 pb-16 pt-8 sm:px-6">
+        <div className="grid gap-8 lg:grid-cols-[1fr_340px] xl:grid-cols-[1fr_380px]">
+          <div className="space-y-8">
+            <div>
+              <p className="text-4xl font-black tracking-tight text-[#0f2f3f] sm:text-5xl">
+                {displayPrice != null ? formatPrice(displayPrice) : "Prix sur demande"}
+              </p>
+              <h1 className="mt-4 text-3xl font-black tracking-tight text-[#0f2f3f] sm:text-4xl">
                 {title}
               </h1>
               {location ? (
-                <p className="mt-3 flex items-center gap-2 text-[#667085]">
-                  <MapPin size={18} /> {location}
+                <p className="mt-3 flex items-center gap-2 text-base font-medium text-[#475467]">
+                  <MapPin size={18} className="text-[#0f2f3f]" /> {location}
                 </p>
               ) : null}
-              <p className="mt-6 text-lg leading-7 text-[#475467] whitespace-pre-line">
-                {property.catalogDescription ??
-                  property.description ??
-                  "Découvrez ce bien grâce à la visite virtuelle immersive."}
-              </p>
+              {property.visitType === VisitType.MATTERPORT ? (
+                <p className="mt-3 text-sm font-bold text-[#2f6f5e]">
+                  Visite Matterport immersive disponible
+                </p>
+              ) : null}
             </div>
-          </Card>
 
-          <div className="space-y-6">
             <Card className="bg-white">
-              <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[#2f6f5e]">
-                Prix
-              </p>
-              <p className="mt-2 text-4xl font-black text-[#0f2f3f]">
-                {displayPrice != null ? formatPrice(displayPrice) : "Sur demande"}
-              </p>
-
-              <div className="mt-6 grid gap-2 text-sm text-[#475467]">
-                {property.catalogSurface ? <p>Surface : {property.catalogSurface} m²</p> : null}
-                {property.catalogRooms ? <p>Pièces : {property.catalogRooms}</p> : null}
-                {property.catalogBedrooms ? <p>Chambres : {property.catalogBedrooms}</p> : null}
-              </div>
-
-              <div className="mt-8 grid gap-3">
-                <Button asChild>
-                  <Link href={`/visite/${property.slug}`}>Lancer la visite virtuelle</Link>
-                </Button>
-                {property.externalListingUrl ? (
-                  <Button asChild variant="secondary">
-                    <a href={property.externalListingUrl} target="_blank" rel="noreferrer">
-                      Voir l’annonce Leboncoin
-                    </a>
-                  </Button>
+              <h2 className="text-lg font-black text-[#0f2f3f]">Caractéristiques</h2>
+              <div className="mt-4 grid gap-3 sm:grid-cols-3">
+                {property.catalogSurface ? (
+                  <div className="flex items-center gap-3 rounded-xl bg-[#f7f5f0] p-4">
+                    <Maximize2 size={20} className="text-[#0f2f3f]" />
+                    <div>
+                      <p className="text-xs font-semibold uppercase tracking-wide text-[#475467]">
+                        Surface
+                      </p>
+                      <p className="text-lg font-bold text-[#0f2f3f]">
+                        {property.catalogSurface} m²
+                      </p>
+                    </div>
+                  </div>
+                ) : null}
+                {property.catalogRooms ? (
+                  <div className="flex items-center gap-3 rounded-xl bg-[#f7f5f0] p-4">
+                    <LayoutGrid size={20} className="text-[#0f2f3f]" />
+                    <div>
+                      <p className="text-xs font-semibold uppercase tracking-wide text-[#475467]">
+                        Pièces
+                      </p>
+                      <p className="text-lg font-bold text-[#0f2f3f]">{property.catalogRooms}</p>
+                    </div>
+                  </div>
+                ) : null}
+                {property.catalogBedrooms ? (
+                  <div className="flex items-center gap-3 rounded-xl bg-[#f7f5f0] p-4">
+                    <BedDouble size={20} className="text-[#0f2f3f]" />
+                    <div>
+                      <p className="text-xs font-semibold uppercase tracking-wide text-[#475467]">
+                        Chambres
+                      </p>
+                      <p className="text-lg font-bold text-[#0f2f3f]">
+                        {property.catalogBedrooms}
+                      </p>
+                    </div>
+                  </div>
                 ) : null}
               </div>
             </Card>
 
             <Card className="bg-white">
-              <h2 className="text-xl font-black text-[#0f2f3f]">
-                Vous voulez une visite virtuelle pour votre bien ?
-              </h2>
-              <p className="mt-2 text-sm text-[#667085]">
-                Ajoutez une visite 3D/360 à votre annonce et donnez plus envie aux acheteurs.
+              <h2 className="text-lg font-black text-[#0f2f3f]">Description</h2>
+              <p className="text-subtle mt-4 whitespace-pre-line text-base leading-8">
+                {bodyDescription}
               </p>
-              <div className="mt-5">
-                <Button asChild variant="secondary">
+            </Card>
+          </div>
+
+          <div className="lg:sticky lg:top-24 lg:self-start">
+            <Card className="space-y-5 bg-white">
+              <div>
+                <p className="text-sm font-bold uppercase tracking-[0.16em] text-[#475467]">
+                  Prix
+                </p>
+                <p className="mt-1 text-3xl font-black text-[#0f2f3f]">
+                  {displayPrice != null ? formatPrice(displayPrice) : "Sur demande"}
+                </p>
+              </div>
+
+              <div className="grid gap-3">
+                <Button asChild size="lg" className="w-full">
+                  <Link href={`/visite/${property.slug}`}>Lancer la visite virtuelle</Link>
+                </Button>
+                {property.externalListingUrl ? (
+                  <Button asChild variant="outline" className="w-full">
+                    <a href={property.externalListingUrl} target="_blank" rel="noreferrer">
+                      Voir l&apos;annonce Leboncoin
+                    </a>
+                  </Button>
+                ) : null}
+                <Button asChild variant="secondary" className="w-full">
                   <a href="mailto:contact@sitereadyshd.com">Nous contacter</a>
+                </Button>
+              </div>
+            </Card>
+
+            <Card className="mt-5 bg-[#f0ece4]">
+              <h2 className="text-lg font-black text-[#0f2f3f]">
+                Visite virtuelle pour votre bien ?
+              </h2>
+              <p className="text-muted mt-2 text-sm leading-relaxed">
+                Ajoutez une visite virtuelle à votre annonce et démarquez votre bien.
+              </p>
+              <div className="mt-4">
+                <Button asChild variant="outline" className="w-full">
+                  <a href="mailto:contact@sitereadyshd.com">Demander un devis</a>
                 </Button>
               </div>
             </Card>
@@ -205,4 +260,3 @@ export default async function BienDetailPage({ params }: Props) {
     </main>
   );
 }
-
