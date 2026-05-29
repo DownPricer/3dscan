@@ -56,7 +56,7 @@ export type MatterportLocalManifest = {
     files?: string[];
     width: number | null;
     height: number | null;
-    kind: "equirectangular_candidate" | "cube_face_set_candidate";
+    kind: "panorama_360" | "equirectangular_candidate" | "cube_face_set_candidate";
     position: { x: number; y: number; z: number } | null;
     rotation: { yaw?: number; pitch?: number; roll?: number; quaternion?: number[] } | null;
   }>;
@@ -512,28 +512,40 @@ function findCubeGroups(
     }));
 }
 
+function isUsableEquirectangular(image: ImageInventory) {
+  if (image.kind !== "equirectangular_candidate") return false;
+  if (!image.width || !image.height) return false;
+  return image.width >= 2048 && Math.abs(image.width / image.height - 2) < 0.03;
+}
+
 function buildManifest(
   images: ImageInventory[],
   files: FileInventory[],
   options: AuditOptions,
 ): MatterportLocalManifest {
   const equirectangular = images
-    .filter((image) => image.kind === "equirectangular_candidate")
+    .filter(isUsableEquirectangular)
     .sort((a, b) => (b.width ?? 0) * (b.height ?? 0) - (a.width ?? 0) * (a.height ?? 0))
     .map((image) => ({
       id: `pano-${randomUUID()}`,
       file: publicUrlFor(image.path, options.publicBaseUrl, options.imageUrlOverrides),
       width: image.width,
       height: image.height,
-      kind: "equirectangular_candidate" as const,
+      kind: "panorama_360" as const,
       position: null,
       rotation: null,
     }));
 
   const cubeGroups = findCubeGroups(images, options.publicBaseUrl, options.imageUrlOverrides);
-  const panoramas = [...equirectangular, ...cubeGroups];
+  const panoramas = equirectangular;
   const floorplans = images
-    .filter((image) => floorplanHints.some((hint) => hint.test(image.path)))
+    .filter(
+      (image) =>
+        image.kind !== "equirectangular_candidate" &&
+        image.kind !== "cube_face_candidate" &&
+        !/ScanLocal/i.test(image.path) &&
+        floorplanHints.some((hint) => hint.test(image.path)),
+    )
     .map((image) => publicUrlFor(image.path, options.publicBaseUrl, options.imageUrlOverrides));
   const unsupportedFiles = files
     .filter((file) => !imageExtensions.has(file.extension) && !metadataExtensions.has(file.extension) && !meshExtensions.has(file.extension))
@@ -643,12 +655,12 @@ export async function auditExtractedMatterportBackup(options: AuditOptions): Pro
       ? "Oui, un fichier mesh standard a été trouvé."
       : "Aucun OBJ/GLB/GLTF/mesh standard détecté.",
     localVisit:
-      manifest.panoramas.length > 0
-        ? "Oui, une visite locale partielle peut être créée avec les vues 360/cube faces disponibles."
+      manifest.summary.panoramaCandidates > 0
+        ? "Oui, une visite locale partielle peut être créée avec les panoramas 360 2:1 détectés."
         : "Pas encore, sauf galerie/rapport, car aucune vue 360 exploitable n’a été identifiée.",
     bestMvp:
-      manifest.panoramas.length > 0
-        ? "Viewer local avec navigation entre panoramas/cube faces, liste latérale, plein écran et rapport d’audit."
+      manifest.summary.panoramaCandidates > 0
+        ? "Viewer local avec navigation entre panoramas 360 2:1, liste latérale, plein écran et rapport d’audit."
         : "Afficher le rapport et une galerie des images, puis ajouter un placement manuel si des vues deviennent identifiables.",
   };
 
@@ -671,6 +683,9 @@ export function renderMatterportAuditMarkdown(audit: MatterportBackupAudit) {
     .join("\n");
   const panoramaRows = audit.manifest.panoramas
     .map((p) => `- ${p.id}: ${p.kind}, ${p.width ?? "?"}x${p.height ?? "?"}, ${p.file ?? p.files?.[0] ?? "faces cube"}`)
+    .join("\n") || "- Aucun";
+  const cubeGroupRows = findCubeGroups(audit.images)
+    .map((p) => `- ${p.id}: ${p.width ?? "?"}x${p.height ?? "?"}, ${p.files?.[0] ?? "faces cube"}`)
     .join("\n") || "- Aucun";
   const treeRows = audit.files
     .map((file) => `- ${file.path} (${file.size} octets, ${file.detectedFormat}, magic ${file.magic || "n/a"})`)
@@ -729,6 +744,9 @@ ${imageRows}
 
 ## Panoramas / vues candidates
 ${panoramaRows}
+
+## Groupes cube faces détectés non affichés dans le viewer
+${cubeGroupRows}
 
 ## Métadonnées propriétaires auditées
 ${metadataRows}

@@ -9,7 +9,7 @@ import {
   VisitType,
 } from "@prisma/client";
 import { useRouter } from "next/navigation";
-import { ChangeEvent, FormEvent, useCallback, useRef, useState } from "react";
+import { ChangeEvent, FormEvent, useRef, useState } from "react";
 import {
   HybridTourWizard,
   type SaveStatus,
@@ -327,13 +327,9 @@ export function PropertyForm({ property }: { property?: PropertyFormValue }) {
     return true;
   }
 
-  const saveDraft = useCallback(async () => persistProperty("DRAFT"), [
-    uploadState,
-    visitType,
-    panoramaScenes,
-    hotspots,
-    propertyId,
-  ]);
+  async function saveDraft() {
+    return persistProperty("DRAFT");
+  }
 
   async function upload(files: File[], kind: "model" | "cover" | "panorama") {
     setUploading(kind);
@@ -633,9 +629,9 @@ export function PropertyForm({ property }: { property?: PropertyFormValue }) {
     visitType === VisitType.MATTERPORT
       ? canPublishMatterport
       : Boolean(uploadState.modelUrl.trim());
-  const panoramaCandidateCount =
-    (matterportAuditSummary?.panoramaCandidates ?? 0) +
-    (matterportAuditSummary?.cubeFaceSetCandidates ?? 0);
+  const usableMatterportPanoramaCount = matterportAuditSummary?.panoramaCandidates ?? 0;
+  const hiddenMatterportCubeGroupCount = matterportAuditSummary?.cubeFaceSetCandidates ?? 0;
+  const publicVisitUrl = successUrl ?? (property?.slug ? `/visite/${property.slug}` : null);
   const matterportImportIsProblem =
     matterportImportStatus === MatterportImportStatus.ERROR ||
     matterportImportStatus === MatterportImportStatus.UNSUPPORTED;
@@ -1053,12 +1049,16 @@ export function PropertyForm({ property }: { property?: PropertyFormValue }) {
                         </p>
                         <p>Fichiers analysés : {matterportAuditSummary.totalFiles ?? 0}</p>
                         <p>Images : {matterportAuditSummary.imageCount ?? 0}</p>
-                        <p>Panoramas trouvés : {panoramaCandidateCount}</p>
+                        <p>{usableMatterportPanoramaCount} panoramas 360 utilisables</p>
+                        <p>
+                          {hiddenMatterportCubeGroupCount} groupes cube faces détectés mais non
+                          affichés
+                        </p>
                         <p>Images optimisées : {matterportAuditSummary.optimizedImageCount ?? 0}</p>
                         <p>Limite actuelle : {matterportAuditSummary.importLimitMb ?? "—"} Mo</p>
                         <p>Scan points : {matterportAuditSummary.scanPointsFound ?? 0}</p>
                         <p>Plan détecté : {matterportAuditSummary.hasFloorplan ? "oui" : "non"}</p>
-                        <p>Mesh détecté : {matterportAuditSummary.hasMesh ? "oui" : "non"}</p>
+                        <p>Dollhouse 3D non reconstruit</p>
                         <p className="sm:col-span-2">
                           Mode généré :{" "}
                           {matterportImportMode === MatterportImportMode.LOCAL_BACKUP_VIEWER
@@ -1080,9 +1080,21 @@ export function PropertyForm({ property }: { property?: PropertyFormValue }) {
                         Télécharger le rapport d’audit
                       </a>
                     ) : null}
+                    {matterportImportMode === MatterportImportMode.LOCAL_BACKUP_VIEWER &&
+                    publicVisitUrl ? (
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="secondary"
+                        className="ml-0 mt-3 sm:ml-3"
+                        onClick={() => window.open(publicVisitUrl, "_blank")}
+                      >
+                        Ouvrir la visite locale
+                      </Button>
+                    ) : null}
                     <p className="mt-3 text-[#667085]">
-                      Ce rendu local peut être différent de Matterport car le format backup est
-                      propriétaire.
+                      Ce rendu local affiche uniquement les panoramas 360 extraits du backup. Il ne
+                      reconstruit pas le dollhouse 3D Matterport.
                     </p>
                   </div>
                 ) : null}
