@@ -33,8 +33,12 @@ body {
 }
 
 a {
-  color: inherit;
   text-decoration: none;
+}
+
+/* Les liens héritent la couleur du parent sauf boutons (asChild) qui ont une couleur explicite */
+a:not([class*="bg-"]) {
+  color: inherit;
 }
 
 button,

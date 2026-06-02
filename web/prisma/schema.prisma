@@ -61,6 +61,11 @@ enum CatalogStatus {
   SOLD
 }
 
+enum ListingType {
+  SALE
+  RENT
+}
+
 enum ExternalListingSource {
   LEBONCOIN
   OTHER
@@ -113,6 +118,7 @@ model Property {
   catalogCityLabel    String?
   catalogDescription  String?
   catalogPrice        Int?
+  listingType         ListingType     @default(SALE)
   catalogCity         String?
   catalogPostalCode   String?
   catalogSurface      Int?

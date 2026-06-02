@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { VisitType } from "@prisma/client";
+import { ListingType, VisitType } from "@prisma/client";
 import { BedDouble, Home, LayoutGrid, MapPin, Maximize2, Search } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Badge } from "@/components/ui/badge";
@@ -9,7 +9,11 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
-import { formatPrice } from "@/lib/utils";
+import {
+  catalogListingTypeLabel,
+  formatCatalogPrice,
+  type CatalogListingType,
+} from "@/lib/utils";
 
 export type CatalogPropertyItem = {
   id: string;
@@ -23,6 +27,7 @@ export type CatalogPropertyItem = {
   catalogTitle: string | null;
   catalogDescription: string | null;
   catalogPrice: number | null;
+  listingType: ListingType;
   catalogCity: string | null;
   catalogPostalCode: string | null;
   catalogSurface: number | null;
@@ -33,6 +38,7 @@ export type CatalogPropertyItem = {
 };
 
 type SortOption = "recent" | "price-asc" | "price-desc" | "name";
+type ListingFilter = "all" | ListingType;
 
 function visitTypeLabel(type: VisitType) {
   if (type === VisitType.MODEL_3D) return "3D";
@@ -41,9 +47,15 @@ function visitTypeLabel(type: VisitType) {
   return "Hybride";
 }
 
+function resolveListingType(listingType?: ListingType | null): CatalogListingType {
+  return listingType === ListingType.RENT ? "RENT" : "SALE";
+}
+
 function PropertyCard({ property }: { property: CatalogPropertyItem }) {
   const title = property.catalogTitle ?? property.name;
+  const listingType = resolveListingType(property.listingType);
   const displayPrice = property.catalogPrice ?? property.price ?? null;
+  const priceLabel = formatCatalogPrice(displayPrice, listingType);
   const city = property.catalogCity ?? property.city ?? null;
   const postal = property.catalogPostalCode ?? property.postalCode ?? null;
   const location = [city, postal].filter(Boolean).join(" ");
@@ -71,6 +83,7 @@ function PropertyCard({ property }: { property: CatalogPropertyItem }) {
         )}
         <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-black/50 to-transparent" />
         <div className="absolute left-3 top-3 flex flex-wrap gap-1.5">
+          <Badge variant="overlay">{catalogListingTypeLabel(listingType)}</Badge>
           <Badge variant="overlay">Visite virtuelle</Badge>
           <Badge variant="overlay">{visitTypeLabel(property.visitType)}</Badge>
         </div>
@@ -78,7 +91,7 @@ function PropertyCard({ property }: { property: CatalogPropertyItem }) {
 
       <div className="flex flex-1 flex-col p-5 sm:p-6">
         <p className="text-2xl font-black tracking-tight text-[#0f2f3f]">
-          {displayPrice != null ? formatPrice(displayPrice) : "Prix sur demande"}
+          {priceLabel ?? "Prix sur demande"}
         </p>
         <h2 className="mt-2 text-lg font-bold leading-snug text-[#0f2f3f]">{title}</h2>
         {location ? (
@@ -133,6 +146,7 @@ function PropertyCard({ property }: { property: CatalogPropertyItem }) {
 export function CatalogList({ properties }: { properties: CatalogPropertyItem[] }) {
   const [query, setQuery] = useState("");
   const [cityFilter, setCityFilter] = useState("");
+  const [listingFilter, setListingFilter] = useState<ListingFilter>("all");
   const [maxPrice, setMaxPrice] = useState("");
   const [sort, setSort] = useState<SortOption>("recent");
 
@@ -155,9 +169,11 @@ export function CatalogList({ properties }: { properties: CatalogPropertyItem[] 
       const city = (property.catalogCity ?? property.city ?? "").toLowerCase();
       const postal = (property.catalogPostalCode ?? property.postalCode ?? "").toLowerCase();
       const price = property.catalogPrice ?? property.price ?? null;
+      const listingType = resolveListingType(property.listingType);
 
       if (q && !title.includes(q) && !city.includes(q) && !postal.includes(q)) return false;
       if (cityQ && city !== cityQ) return false;
+      if (listingFilter !== "all" && listingType !== listingFilter) return false;
       if (max != null && !Number.isNaN(max) && price != null && price > max) return false;
       return true;
     });
@@ -182,7 +198,7 @@ export function CatalogList({ properties }: { properties: CatalogPropertyItem[] 
     });
 
     return list;
-  }, [properties, query, cityFilter, maxPrice, sort]);
+  }, [properties, query, cityFilter, listingFilter, maxPrice, sort]);
 
   if (properties.length === 0) {
     return (
@@ -198,8 +214,8 @@ export function CatalogList({ properties }: { properties: CatalogPropertyItem[] 
   return (
     <div className="space-y-8">
       <Card className="bg-white p-4 sm:p-5">
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="relative sm:col-span-2 lg:col-span-1">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+          <div className="relative sm:col-span-2 lg:col-span-2">
             <Search
               size={16}
               className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[#475467]"
@@ -212,6 +228,11 @@ export function CatalogList({ properties }: { properties: CatalogPropertyItem[] 
               className="pl-9"
             />
           </div>
+          <Select value={listingFilter} onChange={(event) => setListingFilter(event.target.value as ListingFilter)}>
+            <option value="all">Tous les types</option>
+            <option value={ListingType.SALE}>Vente</option>
+            <option value={ListingType.RENT}>Location</option>
+          </Select>
           <Select value={cityFilter} onChange={(event) => setCityFilter(event.target.value)}>
             <option value="">Toutes les villes</option>
             {cities.map((city) => (

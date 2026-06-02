@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { VisitType } from "@prisma/client";
+import { ListingType, VisitType } from "@prisma/client";
 import {
   BedDouble,
   Home,
@@ -18,7 +18,12 @@ import { readSessionToken } from "@/lib/auth";
 import { sessionCookieName } from "@/lib/auth-constants";
 import { isVisibleInCatalog } from "@/lib/catalog-visibility";
 import { prisma } from "@/lib/prisma";
-import { formatPrice } from "@/lib/utils";
+import {
+  catalogListingTypeLabel,
+  catalogPriceFieldLabel,
+  formatCatalogPrice,
+  type CatalogListingType,
+} from "@/lib/utils";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -32,6 +37,10 @@ function visitTypeLabel(type: VisitType) {
   if (type === VisitType.PANORAMA_360) return "360";
   if (type === VisitType.MATTERPORT) return "Matterport";
   return "Hybride";
+}
+
+function resolveListingType(listingType?: ListingType | null): CatalogListingType {
+  return listingType === ListingType.RENT ? "RENT" : "SALE";
 }
 
 export async function generateMetadata({ params }: Props) {
@@ -75,6 +84,7 @@ export default async function BienDetailPage({ params }: Props) {
       catalogTitle: true,
       catalogDescription: true,
       catalogPrice: true,
+      listingType: true,
       catalogCity: true,
       catalogPostalCode: true,
       catalogSurface: true,
@@ -99,7 +109,11 @@ export default async function BienDetailPage({ params }: Props) {
   }
 
   const title = property.catalogTitle ?? property.name;
+  const listingType = resolveListingType(property.listingType);
   const displayPrice = property.catalogPrice ?? property.price ?? null;
+  const priceLabel = formatCatalogPrice(displayPrice, listingType);
+  const priceFieldLabel = catalogPriceFieldLabel(listingType);
+  const listingBadge = catalogListingTypeLabel(listingType);
   const city = property.catalogCity ?? property.city ?? null;
   const postal = property.catalogPostalCode ?? property.postalCode ?? null;
   const location = [city, postal].filter(Boolean).join(" ");
@@ -134,6 +148,7 @@ export default async function BienDetailPage({ params }: Props) {
           )}
           <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/60 to-transparent" />
           <div className="absolute left-4 top-4 flex flex-wrap gap-2">
+            <Badge variant="overlay">{listingBadge}</Badge>
             <Badge variant="overlay">Visite virtuelle</Badge>
             <Badge variant="overlay">{visitTypeLabel(property.visitType)}</Badge>
           </div>
@@ -144,8 +159,11 @@ export default async function BienDetailPage({ params }: Props) {
         <div className="grid gap-8 lg:grid-cols-[1fr_340px] xl:grid-cols-[1fr_380px]">
           <div className="space-y-8">
             <div>
-              <p className="text-4xl font-black tracking-tight text-[#0f2f3f] sm:text-5xl">
-                {displayPrice != null ? formatPrice(displayPrice) : "Prix sur demande"}
+              <p className="text-sm font-bold uppercase tracking-[0.16em] text-[#475467]">
+                {priceFieldLabel}
+              </p>
+              <p className="mt-1 text-4xl font-black tracking-tight text-[#0f2f3f] sm:text-5xl">
+                {priceLabel ?? "Prix sur demande"}
               </p>
               <h1 className="mt-4 text-3xl font-black tracking-tight text-[#0f2f3f] sm:text-4xl">
                 {title}
@@ -217,10 +235,10 @@ export default async function BienDetailPage({ params }: Props) {
             <Card className="space-y-5 bg-white">
               <div>
                 <p className="text-sm font-bold uppercase tracking-[0.16em] text-[#475467]">
-                  Prix
+                  {priceFieldLabel}
                 </p>
                 <p className="mt-1 text-3xl font-black text-[#0f2f3f]">
-                  {displayPrice != null ? formatPrice(displayPrice) : "Sur demande"}
+                  {priceLabel ?? "Sur demande"}
                 </p>
               </div>
 

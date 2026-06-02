@@ -13,6 +13,8 @@
     "db:migrate": "prisma migrate dev",
     "db:seed": "tsx prisma/seed.ts",
     "check:external-listings": "tsx scripts/check-external-listings.ts",
+    "debug:catalog": "tsx scripts/debug-catalog.ts",
+    "fix:catalog-visibility": "tsx scripts/fix-catalog-visibility.ts",
     "audit:matterport-backup": "tsx scripts/audit-matterport-backup.ts"
   },
   "dependencies": {

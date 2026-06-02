@@ -32,6 +32,7 @@ export default async function HomePage() {
       catalogTitle: true,
       catalogDescription: true,
       catalogPrice: true,
+      listingType: true,
       catalogCity: true,
       catalogPostalCode: true,
       catalogSurface: true,

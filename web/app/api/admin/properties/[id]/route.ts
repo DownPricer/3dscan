@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdminRequest } from "@/lib/auth";
+import { resolveExternalListingStatus } from "@/lib/catalog-visibility";
 import { getPublicVisitUrl } from "@/lib/public-url";
 import { prisma } from "@/lib/prisma";
 import { createUniquePropertySlug } from "@/lib/slug";
@@ -48,6 +49,10 @@ export async function PATCH(request: NextRequest, { params }: Params) {
       parsed.name && parsed.name !== current.name
         ? await createUniquePropertySlug(parsed.name, id)
         : current.slug;
+    const nextExternalListingUrl =
+      "externalListingUrl" in parsed
+        ? normalizeOptionalString(parsed.externalListingUrl)
+        : current.externalListingUrl;
 
     const property = await prisma.$transaction(async (tx) => {
       await tx.property.update({
@@ -128,6 +133,7 @@ export async function PATCH(request: NextRequest, { params }: Params) {
           ...("catalogPrice" in parsed
             ? { catalogPrice: parsed.catalogPrice === "" ? null : parsed.catalogPrice ?? null }
             : {}),
+          ...("listingType" in parsed ? { listingType: parsed.listingType } : {}),
           ...("catalogCity" in parsed
             ? { catalogCity: normalizeOptionalString(parsed.catalogCity) }
             : {}),
@@ -171,16 +177,22 @@ export async function PATCH(request: NextRequest, { params }: Params) {
             ? { catalogCoverImageUrl: normalizeOptionalString(parsed.catalogCoverImageUrl) }
             : {}),
           ...("externalListingUrl" in parsed
-            ? { externalListingUrl: normalizeOptionalString(parsed.externalListingUrl) }
+            ? { externalListingUrl: nextExternalListingUrl }
             : {}),
           ...("externalListingSource" in parsed
             ? {
-                externalListingSource:
-                  parsed.externalListingSource ?? null,
+                externalListingSource: parsed.externalListingSource ?? null,
               }
             : {}),
-          ...("externalListingStatus" in parsed && parsed.externalListingStatus
-            ? { externalListingStatus: parsed.externalListingStatus }
+          ...("externalListingUrl" in parsed || "externalListingStatus" in parsed
+            ? {
+                externalListingStatus: resolveExternalListingStatus(
+                  nextExternalListingUrl,
+                  "externalListingStatus" in parsed
+                    ? parsed.externalListingStatus
+                    : current.externalListingStatus,
+                ),
+              }
             : {}),
         },
       });

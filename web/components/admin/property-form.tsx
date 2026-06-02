@@ -4,6 +4,7 @@ import {
   CatalogStatus,
   ExternalListingSource,
   ExternalListingStatus,
+  ListingType,
   MatterportImportMode,
   MatterportImportStatus,
   PropertyStatus,
@@ -45,6 +46,7 @@ type PropertyFormValue = {
   catalogTitle?: string | null;
   catalogDescription?: string | null;
   catalogPrice?: number | null;
+  listingType?: ListingType | null;
   catalogCity?: string | null;
   catalogPostalCode?: string | null;
   catalogSurface?: number | null;
@@ -213,6 +215,9 @@ export function PropertyForm({ property }: { property?: PropertyFormValue }) {
   const [catalogStatusPreview, setCatalogStatusPreview] = useState<CatalogStatus>(
     property?.catalogStatus ?? CatalogStatus.DRAFT,
   );
+  const [listingTypePreview, setListingTypePreview] = useState<ListingType>(
+    property?.listingType ?? ListingType.SALE,
+  );
   const [propertyStatusPreview, setPropertyStatusPreview] = useState<PropertyStatus>(
     property?.status ?? PropertyStatus.DRAFT,
   );
@@ -279,6 +284,7 @@ export function PropertyForm({ property }: { property?: PropertyFormValue }) {
       catalogTitle: formData.get("catalogTitle"),
       catalogDescription: formData.get("catalogDescription"),
       catalogPrice: formData.get("catalogPrice") || "",
+      listingType: (formData.get("listingType") as ListingType) || ListingType.SALE,
       catalogCity: formData.get("catalogCity"),
       catalogPostalCode: formData.get("catalogPostalCode"),
       catalogSurface: formData.get("catalogSurface") || "",
@@ -829,7 +835,24 @@ export function PropertyForm({ property }: { property?: PropertyFormValue }) {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="catalogPrice">Prix</Label>
+              <Label htmlFor="listingType">Type d&apos;annonce</Label>
+              <Select
+                id="listingType"
+                name="listingType"
+                value={listingTypePreview}
+                onChange={(event) =>
+                  setListingTypePreview(event.target.value as ListingType)
+                }
+              >
+                <option value={ListingType.SALE}>Vente</option>
+                <option value={ListingType.RENT}>Location</option>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="catalogPrice">
+                {listingTypePreview === ListingType.RENT ? "Loyer mensuel" : "Prix de vente"}
+              </Label>
               <Input
                 id="catalogPrice"
                 name="catalogPrice"
@@ -837,6 +860,11 @@ export function PropertyForm({ property }: { property?: PropertyFormValue }) {
                 min="0"
                 defaultValue={property?.catalogPrice ?? ""}
               />
+              {listingTypePreview === ListingType.RENT ? (
+                <p className="text-muted text-xs">
+                  Montant par mois, hors charges si non précisé.
+                </p>
+              ) : null}
             </div>
 
             <div className="space-y-2">

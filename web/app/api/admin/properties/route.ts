@@ -1,5 +1,7 @@
+import { ListingType } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdminRequest } from "@/lib/auth";
+import { resolveExternalListingStatus } from "@/lib/catalog-visibility";
 import { replaceHybridData } from "@/lib/property-hybrid";
 import { getPublicVisitUrl } from "@/lib/public-url";
 import { createUniquePropertySlug } from "@/lib/slug";
@@ -8,6 +10,7 @@ import { normalizeOptionalString, propertySchema } from "@/lib/validators";
 
 function normalizePropertyPayload(input: unknown) {
   const parsed = propertySchema.parse(input);
+  const externalListingUrl = normalizeOptionalString(parsed.externalListingUrl);
 
   return {
     data: {
@@ -44,6 +47,7 @@ function normalizePropertyPayload(input: unknown) {
       catalogCityLabel: normalizeOptionalString(parsed.catalogCityLabel),
       catalogDescription: normalizeOptionalString(parsed.catalogDescription),
       catalogPrice: parsed.catalogPrice === "" ? null : parsed.catalogPrice ?? null,
+      listingType: parsed.listingType ?? ListingType.SALE,
       catalogCity: normalizeOptionalString(parsed.catalogCity),
       catalogPostalCode: normalizeOptionalString(parsed.catalogPostalCode),
       catalogSurface: parsed.catalogSurface === "" ? null : parsed.catalogSurface ?? null,
@@ -59,16 +63,16 @@ function normalizePropertyPayload(input: unknown) {
       externalSource: normalizeOptionalString(parsed.externalSource),
       ...(parsed.externalStatus ? { externalStatus: parsed.externalStatus } : {}),
       catalogCoverImageUrl: normalizeOptionalString(parsed.catalogCoverImageUrl),
-      externalListingUrl: normalizeOptionalString(parsed.externalListingUrl),
+      externalListingUrl,
       ...("externalListingSource" in parsed
         ? {
-            externalListingSource:
-              parsed.externalListingSource ?? null,
+            externalListingSource: parsed.externalListingSource ?? null,
           }
         : {}),
-      ...("externalListingStatus" in parsed && parsed.externalListingStatus
-        ? { externalListingStatus: parsed.externalListingStatus }
-        : {}),
+      externalListingStatus: resolveExternalListingStatus(
+        externalListingUrl,
+        parsed.externalListingStatus,
+      ),
     },
     panoramaScenes: parsed.panoramaScenes ?? [],
     hotspots: parsed.hotspots ?? [],
