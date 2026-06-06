@@ -4,6 +4,10 @@ import { unstable_noStore as noStore } from "next/cache";
 import { CatalogList } from "@/components/catalog/catalog-list";
 import { SiteHeader } from "@/components/catalog/site-header";
 import { Button } from "@/components/ui/button";
+import {
+  buildContactMailto,
+  buildVirtualVisitMailto,
+} from "@/lib/contact-mailto";
 import { catalogVisibilityWhere } from "@/lib/catalog-visibility";
 import { prisma } from "@/lib/prisma";
 
@@ -61,7 +65,7 @@ export default async function HomePage() {
           </p>
           <div className="mt-8">
             <Button asChild size="lg">
-              <a href="mailto:contact@sitereadyshd.com">
+              <a href={buildVirtualVisitMailto()}>
                 Mettre mon bien en visite virtuelle <ArrowRight size={18} />
               </a>
             </Button>
@@ -83,8 +87,8 @@ export default async function HomePage() {
               Ajoutez une visite virtuelle à votre annonce et démarquez votre bien.
             </p>
           </div>
-          <Button asChild size="lg" variant="outline">
-            <a href="mailto:contact@sitereadyshd.com">
+          <Button asChild size="lg" variant="accent">
+            <a href={buildContactMailto()}>
               Nous contacter <ArrowRight size={18} />
             </a>
           </Button>
@@ -97,7 +101,7 @@ export default async function HomePage() {
           <Link href="/admin/login" className="hover:text-[#0f2f3f]">
             Admin
           </Link>
-          <a href="mailto:contact@sitereadyshd.com" className="hover:text-[#0f2f3f]">
+          <a href={buildContactMailto()} className="hover:text-[#0f2f3f]">
             Contact
           </a>
         </div>

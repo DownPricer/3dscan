@@ -9,11 +9,13 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-slate-950 !text-white shadow-md shadow-slate-950/20 hover:bg-slate-800 active:bg-slate-900",
+          "bg-[#0f2f3f] !text-white shadow-md shadow-[#0f2f3f]/20 hover:bg-[#1a4558] active:bg-[#0a2430] [&_a]:!text-white [&_svg]:!text-white",
+        accent:
+          "bg-[#2f6f5e] !text-white shadow-md shadow-[#2f6f5e]/20 hover:bg-[#3d8a74] active:bg-[#265a4c] [&_a]:!text-white [&_svg]:!text-white",
         secondary:
-          "bg-[#f4f1ea] !text-slate-950 ring-2 ring-slate-950/20 hover:bg-[#ebe5da] active:bg-[#e2dbd0]",
+          "bg-[#f4f1ea] !text-[#0f2f3f] ring-2 ring-[#0f2f3f]/15 hover:bg-[#ebe5da] active:bg-[#e2dbd0] [&_a]:!text-[#0f2f3f]",
         outline:
-          "border-2 border-slate-950 bg-white !text-slate-950 hover:bg-slate-50 active:bg-[#ebe5da]",
+          "border-2 border-[#0f2f3f] bg-white !text-[#0f2f3f] hover:bg-[#f7f5f0] active:bg-[#ebe5da] [&_a]:!text-[#0f2f3f]",
         ghost: "text-[#0f2f3f] hover:bg-[#0f2f3f]/8",
         destructive: "bg-red-700 text-white hover:bg-red-800 active:bg-red-900",
       },

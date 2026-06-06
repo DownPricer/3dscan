@@ -17,6 +17,11 @@ import { Card } from "@/components/ui/card";
 import { readSessionToken } from "@/lib/auth";
 import { sessionCookieName } from "@/lib/auth-constants";
 import { isVisibleInCatalog } from "@/lib/catalog-visibility";
+import {
+  buildPropertyInquiryMailto,
+  buildVirtualVisitMailto,
+} from "@/lib/contact-mailto";
+import { env } from "@/lib/env";
 import { prisma } from "@/lib/prisma";
 import {
   catalogListingTypeLabel,
@@ -122,6 +127,8 @@ export default async function BienDetailPage({ params }: Props) {
     property.catalogDescription?.trim() ||
     property.description?.trim() ||
     "Description à venir.";
+  const propertyPageUrl = `${env.appUrl.replace(/\/$/, "")}/bien/${property.slug}`;
+  const contactMailto = buildPropertyInquiryMailto(title, propertyPageUrl);
 
   return (
     <main className="min-h-screen bg-[#f7f5f0]">
@@ -253,8 +260,8 @@ export default async function BienDetailPage({ params }: Props) {
                     </a>
                   </Button>
                 ) : null}
-                <Button asChild variant="secondary" className="w-full">
-                  <a href="mailto:contact@sitereadyshd.com">Nous contacter</a>
+                <Button asChild variant="accent" className="w-full">
+                  <a href={contactMailto}>Nous contacter</a>
                 </Button>
               </div>
             </Card>
@@ -268,7 +275,7 @@ export default async function BienDetailPage({ params }: Props) {
               </p>
               <div className="mt-4">
                 <Button asChild variant="outline" className="w-full">
-                  <a href="mailto:contact@sitereadyshd.com">Demander un devis</a>
+                  <a href={buildVirtualVisitMailto()}>Demander un devis</a>
                 </Button>
               </div>
             </Card>

@@ -127,7 +127,7 @@ function PropertyCard({ property }: { property: CatalogPropertyItem }) {
           <Button asChild className="w-full">
             <Link href={`/bien/${property.slug}`}>Voir le bien</Link>
           </Button>
-          <Button asChild variant="outline" className="w-full">
+          <Button asChild variant="accent" className="w-full">
             <Link href={`/visite/${property.slug}`}>Lancer la visite</Link>
           </Button>
           {property.externalListingUrl ? (
